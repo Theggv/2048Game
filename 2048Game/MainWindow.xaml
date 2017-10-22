@@ -5,8 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:_2048Game"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
-    <Grid>
-        
+        Title="2048" Height="320" Width="240" KeyDown="Window_KeyDown" WindowStyle="ThreeDBorderWindow" ResizeMode="CanMinimize">
+    <Grid x:Name="mainGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="80"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Canvas x:Name="fieldCanvas" Grid.Row="1" Background="#FFECE2A6" Panel.ZIndex="1" MinWidth="160" MinHeight="160" Loaded="FieldCanvas_Loaded"/>
     </Grid>
 </Window>
+    
