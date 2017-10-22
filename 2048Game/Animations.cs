@@ -12,7 +12,7 @@ using System.Collections;
 
 namespace _2048Game
 {
-    public static class Animations
+    public class Animations
     {
         public enum Direction
         {
@@ -22,43 +22,48 @@ namespace _2048Game
             Down
         }
 
-        private static Element curTarget;
-        private static Point curDest;
-        private static MainWindow mainWindow;
-        public static Storyboard storyboard = new Storyboard();
+        public int AnimationTimeMS = 200;
 
-        public static void GetWindow(MainWindow window)
+        private Element curTarget;
+        private Point curDest;
+        private MainWindow mainWindow;
+        private Storyboard storyboard;
+        private bool isMultiplyValue;
+
+        public Animations(MainWindow window)
         {
             mainWindow = window;
         }
 
-        public static DoubleAnimation SetMoveAnimX(Element from, Point to)
+        public DoubleAnimation SetMoveAnimX(Element from, Point to)
         {
             return new DoubleAnimation
             {
                 From = Canvas.GetLeft(from),
                 To = to.X,
-                Duration = TimeSpan.FromMilliseconds(300),
+                Duration = TimeSpan.FromMilliseconds(AnimationTimeMS),
 
             };
         }
 
-        public static DoubleAnimation SetMoveAnimY(Element from, Point to)
+        public DoubleAnimation SetMoveAnimY(Element from, Point to)
         {
             return new DoubleAnimation
             {
                 From = Canvas.GetTop(from),
                 To = to.Y,
-                Duration = TimeSpan.FromMilliseconds(300)
+                Duration = TimeSpan.FromMilliseconds(AnimationTimeMS)
             };
         }
 
-        public static void SetMoveAnimation(ref Element Target, Point Destination, Direction direction)
+        public void SetMoveAnimation(Element Target, Point Destination, Direction direction, bool isMult = false)
         {
             curTarget = Target;
             curDest = Destination;
+            isMultiplyValue = isMult;
 
             var animation = new DoubleAnimation();
+            storyboard = new Storyboard();
 
             switch (direction)
             {
@@ -83,18 +88,19 @@ namespace _2048Game
                     Storyboard.SetTargetProperty(animation, new PropertyPath(Canvas.TopProperty));
                     break;
             }
-            //storyboard.Completed += new EventHandler(Animation_Completed);
+            animation.Completed += new EventHandler(Animation_Completed);
             storyboard.Children.Add(animation);
             storyboard.Begin();
         }
 
-        public static void StartAnimation()
+        private void Animation_Completed(object sender, EventArgs e)
         {
-            storyboard.Begin();
-        }
-
-        private static void Animation_Completed(object sender, EventArgs e)
-        {
+            if (isMultiplyValue)
+            {
+                curTarget.Value *= 2;
+                curTarget.UpdateColor();
+                MainWindow.Score += curTarget.Value;
+            }
             mainWindow.UpdateInfo(curTarget.row, curTarget.column,
                 (int)(curDest.Y / mainWindow.CellHeigth), (int)(curDest.X / mainWindow.CellWidth));
         }

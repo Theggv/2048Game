@@ -28,6 +28,10 @@ namespace _2048Game
 
         public double CellWidth;
         public double CellHeigth;
+        private static int numAnims = 0;
+
+        public static int Score = 0;
+        public static int PreviousScore = 0;
 
         public MainWindow()
         {
@@ -73,8 +77,7 @@ namespace _2048Game
                 Height = CellHeigth - 1,
                 Width = CellWidth - 1,
                 row = x,
-                column = y,
-                Name = "cell" + x.ToString() + y.ToString()
+                column = y
             };
 
             Canvas.SetLeft(obj, (CellWidth + 1) * y);
@@ -88,31 +91,24 @@ namespace _2048Game
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
+            if (numAnims != 0)
+                return;
+
             switch (e.Key)
             {
                 case Key.Left:
                     for (int i = 0; i < Size; i++)  // Элемент Столбца
                     {
-                        Element[] tempArray = new Element[Size];
-                        for(int j = 0; j < Size; j++)
+                        int[] arrValues = new int[Size];
+                        for (int j = 0; j < Size; j++)
                         {
-                            tempArray[j] = element[i, j];
+                            if (cell[i, j].IsFree)
+                                arrValues[j] = 0;
+                            else
+                                arrValues[j] = element[i, j].Value;
                         }
-
                         for (int k = 0; k < Size; k++)
                         {
-                            int[] arrValues = new int[Size];
-
-                            #region Запись значений строки в массив
-                            for (int j = k; j < Size; j++)
-                            {
-                                if (cell[i, j].IsFree)
-                                    arrValues[j] = 0;
-                                else
-                                    arrValues[j] = tempArray[j].Value;
-                            }
-                            #endregion
-
                             #region Поиск Первого ненулевого элемента
                             int FromCell = -1; // Первый ненулевой элемент
                             for (int j = k; j < Size; j++)
@@ -146,11 +142,15 @@ namespace _2048Game
                             {
                                 if (!cell[i, j].IsFree)
                                 {
-                                    if (tempArray[FromCell].Value == tempArray[j].Value)
+                                    if (arrValues[FromCell] == arrValues[j])
                                     {
                                         MergeCell = j;
                                         break;
                                     }
+                                    else if (arrValues[j] == 0)
+                                        continue;
+                                    else
+                                        break;
                                 }
                             }
                             #endregion
@@ -159,199 +159,373 @@ namespace _2048Game
                             {
                                 if (FromCell != FreeCell)
                                 {
-                                    MoveCell(element[i, FromCell], cell[i, FreeCell].startPoint);
-                                    tempArray[FreeCell] = tempArray[FromCell];
-                                    tempArray[FromCell] = null;
+                                    MoveCell(ref element[i, FromCell], cell[i, FreeCell].startPoint,
+                                        Animations.Direction.Left);
+
+                                    arrValues[FreeCell] = arrValues[FromCell];
+                                    arrValues[FromCell] = 0;
                                 }
                             }
                             else // Если есть второй элемент
                             {
                                 if (FromCell != FreeCell) // Если нужно двигать оба элемента
                                 {
-                                    MoveAndMergeCells(element[i, FromCell], element[i, MergeCell],
-                                        cell[i, FreeCell].startPoint);
-                                    tempArray[FromCell].Value *= 2;
-                                    tempArray[FreeCell] = tempArray[FromCell];
-                                    tempArray[FromCell] = null;
-                                    tempArray[MergeCell] = null;
+                                    MoveAndMergeCells(ref element[i, FromCell], ref element[i, MergeCell],
+                                        cell[i, FreeCell].startPoint, Animations.Direction.Left);
+
+                                    arrValues[FreeCell] = arrValues[FromCell] * 2;
+                                    arrValues[FromCell] = 0;
+                                    arrValues[MergeCell] = 0;
                                 }
                                 else // Если нужно двигать одни элемент
                                 {
-                                    MergeCells(element[i, MergeCell], cell[i, FreeCell].startPoint);
-                                    tempArray[FromCell].Value *= 2;
-                                    tempArray[FreeCell] = tempArray[FromCell];
-                                    tempArray[MergeCell] = null;
+                                    MergeCells(ref element[i, MergeCell], cell[i, FreeCell].startPoint,
+                                        Animations.Direction.Left);
+
+                                    arrValues[FreeCell] = arrValues[FromCell] * 2;
+                                    arrValues[MergeCell] = 0;
                                 }
                             }
                         }
                     }
                     break;
                 case Key.Up:
-                    for (int j = 0; j < Size; j++) // Элемент Строки
+                    for (int j = 0; j < Size; j++)  // Элемент Строки
                     {
-                        for (int i = 0; i < Size - 1; i++) // Элемент Столбца
+                        int[] arrValues = new int[Size];
+                        for (int i = 0; i < Size; i++)
                         {
-                            for (int k = i + 1; k < Size; k++)
+                            if (cell[i, j].IsFree)
+                                arrValues[i] = 0;
+                            else
+                                arrValues[i] = element[i, j].Value;
+                        }
+                        for (int k = 0; k < Size; k++)
+                        {
+                            #region Поиск Первого ненулевого элемента
+                            int FromCell = -1; // Первый ненулевой элемент
+                            for (int i = k; i < Size; i++)
+                            {
+                                if (!cell[i, j].IsFree)
+                                {
+                                    FromCell = i;
+                                    break;
+                                }
+                            }
+                            #endregion
+
+                            // Если строка пустая, то идем дальше.
+                            if (FromCell == -1)
+                                break;
+
+                            #region Поиск Первого нулевого элемента
+                            int FreeCell = FromCell; // Первая свободная клетка
+                            for (int i = FromCell - 1; i >= 0; i--)
                             {
                                 if (cell[i, j].IsFree)
+                                    FreeCell--;
+                                else
+                                    break;
+                            }
+                            #endregion
+
+                            #region Поиск Стакующегося элемента
+                            int MergeCell = FromCell; // Второй элемент со значением FromCell
+                            for (int i = FromCell + 1; i < Size; i++)
+                            {
+                                if (!cell[i, j].IsFree)
                                 {
-                                    if (!cell[k, j].IsFree)
+                                    if (arrValues[FromCell] == arrValues[i])
                                     {
-                                        Animations.GetWindow(this);
-                                        Animations.SetMoveAnimation(ref element[k, j],
-                                            cell[i, j].startPoint, Animations.Direction.Up);
-                                        UpdateCells(k, j, i--, j);
+                                        MergeCell = i;
                                         break;
                                     }
-                                }
-                                else
-                                {
-                                    if (cell[k, j].IsFree)
-                                    {
+                                    else if (arrValues[i] == 0)
                                         continue;
-                                    }
                                     else
-                                    {
-                                        if (element[i, j].Value != element[k, j].Value)
-                                        {
-                                            break;
-                                        }
-                                        else
-                                        {
-                                            element[k, j].Value *= 2;
-                                            Animations.GetWindow(this);
-                                            Animations.SetMoveAnimation(ref element[k, j],
-                                                cell[i, j].startPoint, Animations.Direction.Up);
-                                            UpdateCells(k, j, i, j);
-                                            break;
-                                        }
-                                    }
+                                        break;
+                                }
+                            }
+                            #endregion
+
+                            if (FromCell == MergeCell) // Если нет второго элемента
+                            {
+                                if (FromCell != FreeCell)
+                                {
+                                    MoveCell(ref element[FromCell, j], cell[FreeCell, j].startPoint,
+                                        Animations.Direction.Up);
+
+                                    arrValues[FreeCell] = arrValues[FromCell];
+                                    arrValues[FromCell] = 0;
+                                }
+                            }
+                            else // Если есть второй элемент
+                            {
+                                if (FromCell != FreeCell) // Если нужно двигать оба элемента
+                                {
+                                    MoveAndMergeCells(ref element[FromCell, j], ref element[MergeCell, j],
+                                        cell[FreeCell, j].startPoint, Animations.Direction.Up);
+
+                                    arrValues[FreeCell] = arrValues[FromCell] * 2;
+                                    arrValues[FromCell] = 0;
+                                    arrValues[MergeCell] = 0;
+                                }
+                                else // Если нужно двигать одни элемент
+                                {
+                                    MergeCells(ref element[MergeCell, j], cell[FreeCell, j].startPoint,
+                                        Animations.Direction.Up);
+
+                                    arrValues[FreeCell] = arrValues[FromCell] * 2;
+                                    arrValues[MergeCell] = 0;
                                 }
                             }
                         }
                     }
                     break;
                 case Key.Right:
-                    for (int i = 0; i < Size; i++) // Элемент Столбца
+                    for (int i = 0; i < Size; i++)  // Элемент Столбца
                     {
-                        for (int j = Size - 1; j > 0; j--) // Элемент Строки
+                        int[] arrValues = new int[Size];
+                        for (int j = 0; j < Size; j++)
                         {
-                            for (int k = j - 1; k >= 0; k--)
+                            if (cell[i, j].IsFree)
+                                arrValues[j] = 0;
+                            else
+                                arrValues[j] = element[i, j].Value;
+                        }
+                        for (int k = Size - 1; k >= 0; k--)
+                        {
+                            #region Поиск Первого ненулевого элемента
+                            int FromCell = -1; // Первый ненулевой элемент
+                            for (int j = k; j >= 0; j--)
+                            {
+                                if (!cell[i, j].IsFree)
+                                {
+                                    FromCell = j;
+                                    break;
+                                }
+                            }
+                            #endregion
+
+                            // Если строка пустая, то идем дальше.
+                            if (FromCell == -1)
+                                break;
+
+                            #region Поиск Первого нулевого элемента
+                            int FreeCell = FromCell; // Первая свободная клетка
+                            for (int j = FromCell + 1; j < Size; j++)
                             {
                                 if (cell[i, j].IsFree)
+                                    FreeCell++;
+                                else
+                                    break;
+                            }
+                            #endregion
+
+                            #region Поиск Стакующегося элемента
+                            int MergeCell = FromCell; // Второй элемент со значением FromCell
+                            for (int j = FromCell - 1; j >= 0; j--)
+                            {
+                                if (!cell[i, j].IsFree)
                                 {
-                                    if (!cell[i, k].IsFree)
+                                    if (arrValues[FromCell] == arrValues[j])
                                     {
-                                        Animations.GetWindow(this);
-                                        Animations.SetMoveAnimation(ref element[k, j],
-                                            cell[i, j].startPoint, Animations.Direction.Up);
-                                        UpdateCells(i, k, i, j++);
+                                        MergeCell = j;
                                         break;
                                     }
-                                }
-                                else
-                                {
-                                    if (cell[i, k].IsFree)
-                                    {
+                                    else if (arrValues[j] == 0)
                                         continue;
-                                    }
                                     else
-                                    {
-                                        if (element[i, j].Value != element[i, k].Value)
-                                        {
-                                            break;
-                                        }
-                                        else
-                                        {
-                                            Animations.GetWindow(this);
-                                            Animations.SetMoveAnimation(ref element[i, k],
-                                                cell[i, j].startPoint, Animations.Direction.Up);
-                                            element[i, k].Value *= 2;
-                                            UpdateCells(i, k, i, j);
-                                            break;
-                                        }
-                                    }
+                                        break;
+                                }
+                            }
+                            #endregion
+
+                            if (FromCell == MergeCell) // Если нет второго элемента
+                            {
+                                if (FromCell != FreeCell)
+                                {
+                                    MoveCell(ref element[i, FromCell], cell[i, FreeCell].startPoint,
+                                        Animations.Direction.Left);
+
+                                    arrValues[FreeCell] = arrValues[FromCell];
+                                    arrValues[FromCell] = 0;
+                                }
+                            }
+                            else // Если есть второй элемент
+                            {
+                                if (FromCell != FreeCell) // Если нужно двигать оба элемента
+                                {
+                                    MoveAndMergeCells(ref element[i, FromCell], ref element[i, MergeCell],
+                                        cell[i, FreeCell].startPoint, Animations.Direction.Left);
+
+                                    arrValues[FreeCell] = arrValues[FromCell] * 2;
+                                    arrValues[FromCell] = 0;
+                                    arrValues[MergeCell] = 0;
+                                }
+                                else // Если нужно двигать одни элемент
+                                {
+                                    MergeCells(ref element[i, MergeCell], cell[i, FreeCell].startPoint,
+                                        Animations.Direction.Left);
+
+                                    arrValues[FreeCell] = arrValues[FromCell] * 2;
+                                    arrValues[MergeCell] = 0;
                                 }
                             }
                         }
                     }
                     break;
                 case Key.Down:
-                    for (int j = 0; j < Size; j++) // Элемент Строки
+                    for (int j = 0; j < Size; j++)  // Элемент Строки
                     {
-                        for (int i = Size - 1; i > 0; i--) // Элемент Столбца
+                        int[] arrValues = new int[Size];
+                        for (int i = 0; i < Size; i++)
                         {
-                            for (int k = i - 1; k >= 0; k--)
+                            if (cell[i, j].IsFree)
+                                arrValues[i] = 0;
+                            else
+                                arrValues[i] = element[i, j].Value;
+                        }
+
+                        for (int k = Size - 1; k >= 0; k--)
+                        {
+                            #region Поиск Первого ненулевого элемента
+                            int FromCell = -1; // Первый ненулевой элемент
+                            for (int i = k; i >= 0; i--)
+                            {
+                                if (!cell[i, j].IsFree)
+                                {
+                                    FromCell = i;
+                                    break;
+                                }
+                            }
+                            #endregion
+
+                            // Если строка пустая, то идем дальше.
+                            if (FromCell == -1)
+                                break;
+
+                            #region Поиск Первого нулевого элемента
+                            int FreeCell = FromCell; // Первая свободная клетка
+                            for (int i = FromCell + 1; i < Size; i++)
                             {
                                 if (cell[i, j].IsFree)
+                                    FreeCell++;
+                                else
+                                    break;
+                            }
+                            #endregion
+
+                            #region Поиск Стакующегося элемента
+                            int MergeCell = FromCell; // Второй элемент со значением FromCell
+                            for (int i = FromCell - 1; i >= 0; i--)
+                            {
+                                if (!cell[i, j].IsFree)
                                 {
-                                    if (!cell[k, j].IsFree)
+                                    if (arrValues[FromCell] == arrValues[i])
                                     {
-                                        Animations.GetWindow(this);
-                                        Animations.SetMoveAnimation(ref element[k, j],
-                                            cell[i, j].startPoint, Animations.Direction.Up);
-                                        UpdateCells(k, j, i++, j);
+                                        MergeCell = i;
                                         break;
                                     }
-                                }
-                                else
-                                {
-                                    if (cell[k, j].IsFree)
-                                    {
+                                    else if (arrValues[i] == 0)
                                         continue;
-                                    }
                                     else
-                                    {
-                                        if (element[i, j].Value != element[k, j].Value)
-                                        {
-                                            break;
-                                        }
-                                        else
-                                        {
-                                            Animations.GetWindow(this);
-                                            Animations.SetMoveAnimation(ref element[k, j],
-                                                cell[i, j].startPoint, Animations.Direction.Up);
-                                            element[k, j].Value *= 2;
-                                            UpdateCells(k, j, i, j);
-                                            break;
-                                        }
-                                    }
+                                        break;
+                                }
+                            }
+                            #endregion
+
+                            if (FromCell == MergeCell) // Если нет второго элемента
+                            {
+                                if (FromCell != FreeCell)
+                                {
+                                    MoveCell(ref element[FromCell, j], cell[FreeCell, j].startPoint,
+                                        Animations.Direction.Up);
+
+                                    arrValues[FreeCell] = arrValues[FromCell];
+                                    arrValues[FromCell] = 0;
+                                }
+                            }
+                            else // Если есть второй элемент
+                            {
+                                if (FromCell != FreeCell) // Если нужно двигать оба элемента
+                                {
+                                    MoveAndMergeCells(ref element[FromCell, j], ref element[MergeCell, j],
+                                        cell[FreeCell, j].startPoint, Animations.Direction.Up);
+
+                                    arrValues[FreeCell] = arrValues[FromCell] * 2;
+                                    arrValues[FromCell] = 0;
+                                    arrValues[MergeCell] = 0;
+                                }
+                                else // Если нужно двигать одни элемент
+                                {
+                                    MergeCells(ref element[MergeCell, j], cell[FreeCell, j].startPoint,
+                                        Animations.Direction.Up);
+
+                                    arrValues[FreeCell] = arrValues[FromCell] * 2;
+                                    arrValues[MergeCell] = 0;
                                 }
                             }
                         }
                     }
                     break;
             }
-            //Animations.StartAnimation();
         }
 
-        public void MoveAndMergeCells(Element From, Element Dest, Point To)
+        public void MoveAndMergeCells(ref Element From, ref Element Dest, Point To, Animations.Direction d)
         {
-            Dest.Value *= 2;
-            MoveCell(From, To);
-            MoveCell(Dest, To);
+            MoveCell(ref From, To, d);
+            MoveCell(ref Dest, To, d, true);
         }
 
-        public void MergeCells(Element Dest, Point To)
+        public void MergeCells(ref Element Dest, Point To, Animations.Direction d)
         {
-            Dest.Value *= 2;
-            MoveCell(Dest, To);
+            MoveCell(ref Dest, To, d, true);
         }
 
-        public void MoveCell(Element From, Point To)
+        public void MoveCell(ref Element From, Point To, Animations.Direction d, bool IsMultiply = false)
         {
-            Animations.GetWindow(this);
-            Animations.SetMoveAnimation(ref From, To, Animations.Direction.Up);
+            numAnims++;
+            var anim = new Animations(this);
+            anim.SetMoveAnimation(From, To, d, IsMultiply);
 
             cell[From.row, From.column].IsFree = true;
             cell[(int)(To.Y / CellHeigth), (int)(To.X / CellWidth)].IsFree = false;
         }
 
-        public void UpdateCells(int xFrom, int yFrom, int xTo, int yTo)
+        public void UpdateInfo(int xFrom, int yFrom, int xTo, int yTo)
         {
+            DeleteElement(ref element[xTo, yTo]);
             element[xTo, yTo] = element[xFrom, yFrom];
-            element[xTo, yTo].Visibility = Visibility.Hidden;
+            fieldCanvas.UpdateLayout();
 
+            DeleteElement(ref element[xFrom, yFrom]);
+
+            fieldCanvas.Children.Remove(element[xTo, yTo]);
+            fieldCanvas.Children.Add(element[xTo, yTo]);
+
+            element[xTo, yTo].Visibility = Visibility.Visible;
+            element[xTo, yTo].row = xTo;
+            element[xTo, yTo].column = yTo;
+            fieldCanvas.UpdateLayout();
+
+            numAnims--;
+            if (numAnims == 0)
+            {
+                SpawnRandomElement();
+                UpdateScore();
+            }
+        }
+
+        private void DeleteElement(ref Element element)
+        {
+            fieldCanvas.Children.Remove(element);
+            fieldCanvas.UpdateLayout();
+            element = null;
+        }
+
+        public void SpawnRandomElement()
+        {
             Random rnd = new Random();
             while (true)
             {
@@ -374,11 +548,11 @@ namespace _2048Game
                     int x = rnd.Next(0, 4);
                     int y = rnd.Next(0, 4);
 
-                    if (cell[x, y].IsFree)
+                    if (cell[y, x].IsFree)
                     {
-                        element[x, y] = SpawnElement(x, y);
+                        element[y, x] = SpawnElement(y, x);
 
-                        cell[x, y].IsFree = false;
+                        cell[y, x].IsFree = false;
                         break;
                     }
                 }
@@ -387,27 +561,10 @@ namespace _2048Game
             }
         }
 
-        public void UpdateInfo(int xFrom, int yFrom, int xTo, int yTo)
+        public void UpdateScore()
         {
-            DeleteElement(ref element[xTo, yTo]);
-            element[xTo, yTo] = element[xFrom, yFrom];
-            fieldCanvas.UpdateLayout();
-
-            DeleteElement(ref element[xFrom, yFrom]);
-
-            fieldCanvas.Children.Remove(element[xTo, yTo]);
-            fieldCanvas.Children.Add(element[xTo, yTo]);
-            element[xTo, yTo].Visibility = Visibility.Visible;
-            element[xTo, yTo].row = xTo;
-            element[xTo, yTo].column = yTo;
-            fieldCanvas.UpdateLayout();
-        }
-
-        private void DeleteElement(ref Element element)
-        {
-            fieldCanvas.Children.Remove(element);
-            fieldCanvas.UpdateLayout();
-            element = null;
+            PreviousScore = Score;
+            blockScore.Text = String.Format("Счёт: {0}", Score);
         }
     }
 }
