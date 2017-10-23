@@ -35,8 +35,8 @@ namespace _2048Game
         {
             game = new Game(this);
 
-            Grid.SetRow(game, 1);
-            Grid.SetColumnSpan(game, 2);
+            Grid.SetRow(game, 3);
+            Grid.SetColumnSpan(game, 3);
 
             mainGrid.Children.Add(game);
             game.UpdateLayout();
@@ -44,11 +44,6 @@ namespace _2048Game
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter)
-            {
-                GameStart();
-                return;
-            }
             if (game != null)
                 game.Game_KeyDown(sender, e);
         }
@@ -59,8 +54,8 @@ namespace _2048Game
 
             Grid.SetColumn(loseState, 0);
             Grid.SetRow(loseState, 0);
-            Grid.SetColumnSpan(loseState, 2);
-            Grid.SetRowSpan(loseState, 2);
+            Grid.SetColumnSpan(loseState, 3);
+            Grid.SetRowSpan(loseState, 4);
 
             mainGrid.Children.Add(loseState);
             Animations.OpacityAnimation(loseState);
@@ -72,8 +67,8 @@ namespace _2048Game
 
             Grid.SetColumn(winState, 0);
             Grid.SetRow(winState, 0);
-            Grid.SetColumnSpan(winState, 2);
-            Grid.SetRowSpan(winState, 2);
+            Grid.SetColumnSpan(winState, 3);
+            Grid.SetRowSpan(winState, 4);
 
             mainGrid.Children.Add(winState);
             Animations.OpacityAnimation(winState);
@@ -84,6 +79,12 @@ namespace _2048Game
             mainGrid.Children.Remove(uIElement);
             uIElement = null;
             game.IsInterfaceLocked = false;
+        }
+
+        private void slider_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
+        {
+            Game.Size = (int)slider.Value;
+            GameStart();
         }
     }
 }

@@ -29,7 +29,7 @@ namespace _2048Game
 
         GameState gameState = GameState.Started;
 
-        const int Size = 4;
+        public static int Size = 4;
         public Cell[,] cell = new Cell[Size, Size];
         public Element[,] element = new Element[Size, Size];
 
@@ -40,6 +40,7 @@ namespace _2048Game
 
         public static int Score = 0;
         public static int PreviousScore = 0;
+        public static int BestScore = 0;
 
         MainWindow mainWindow;
         public bool IsInterfaceLocked = false;
@@ -49,6 +50,10 @@ namespace _2048Game
             InitializeComponent();
 
             mainWindow = window;
+            mainWindow.Width = 55 * Size + 10;
+            mainWindow.Height = 55 * Size + 90;
+            mainWindow.UpdateLayout();
+
             Score = 0;
             PreviousScore = 0;
 
@@ -94,7 +99,7 @@ namespace _2048Game
             };
 
             Grid.SetRow(fieldCanvas, 1);
-            Grid.SetColumnSpan(fieldCanvas, 2);
+            Grid.SetColumnSpan(fieldCanvas, 3);
 
             fieldCanvas.Loaded += FieldCanvas_Loaded;
             fieldCanvas.UpdateLayout();
@@ -634,7 +639,11 @@ namespace _2048Game
         public void UpdateScore()
         {
             PreviousScore = Score;
-            mainWindow.blockScore.Text = String.Format("Счёт: {0}", Score);
+            if (Score > BestScore)
+                BestScore = Score;
+
+            mainWindow.blockScore.Text = Score.ToString();
+            mainWindow.blockBestScore.Text = BestScore.ToString();
         }
     }
 }

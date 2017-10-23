@@ -8,18 +8,28 @@
         Title="2048" Height="320" Width="240" ResizeMode="CanMinimize" Padding="0" WindowStyle="ThreeDBorderWindow" KeyDown="Window_KeyDown">
     <Grid x:Name="mainGrid" Background="#FFD3C9C9">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="5*"/>
-            <ColumnDefinition Width="8*"/>
+            <ColumnDefinition Width="4*"/>
+            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="3*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="80"/>
+            <RowDefinition Height="18"/>
+            <RowDefinition Height="27"/>
+            <RowDefinition Height="35"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <TextBlock x:Name="blockScore" x:FieldModifier="public" Grid.Row="0" Grid.Column="1" Text="Счёт: 0" FontSize="18" TextDecorations="{x:Null}" FontWeight="Bold" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,18,0,38" Panel.ZIndex="1" Foreground="#FF4D4D41" Height="24" Width="134">
-            <TextBlock.Effect>
-                <DropShadowEffect BlurRadius="50" Direction="0" ShadowDepth="1" Opacity="0.6"/>
-            </TextBlock.Effect>
-        </TextBlock>
+        <Border BorderBrush="Black" BorderThickness="0" Grid.Row="0" Grid.Column="1" Opacity="0.8" CornerRadius="10" Background="#FF969696" Grid.RowSpan="2" Padding="0" Margin="2">
+            <TextBlock Text="Score" FontSize="14" TextDecorations="{x:Null}" Foreground="#FFF0F0F0" TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Top" TextAlignment="Center" FontWeight="Bold" Opacity="0.8"/>
+        </Border>
+        <Border BorderBrush="Black" BorderThickness="0" Grid.Row="0" Grid.Column="2" Opacity="0.8" CornerRadius="10" Background="#FF969696" Grid.RowSpan="2" Margin="2">
+            <TextBlock Text="Best" TextDecorations="{x:Null}" Foreground="#FFF0F0F0" TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Top" TextAlignment="Center" FontSize="14" FontWeight="Bold" Opacity="0.8" />
+        </Border>
+        <Border BorderBrush="Black" BorderThickness="0" Grid.Row="1" Grid.Column="0" Opacity="0.8" CornerRadius="10" Background="#FF969696" Grid.RowSpan="2" Margin="2">
+            <TextBlock Text="Field Size" FontSize="14" TextDecorations="{x:Null}" Foreground="#FFF0F0F0" TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Top" TextAlignment="Center" FontWeight="Bold" Opacity="0.8"/>
+        </Border>
+        <TextBlock x:Name="blockScore" x:FieldModifier="public" Grid.Row="1" Grid.Column="1" Text="0" Foreground="#FFF0F0F0" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" FontSize="18" FontWeight="Bold" Opacity="0.9"/>
+        <TextBlock x:Name="blockBestScore" x:FieldModifier="public" Grid.Row="1" Grid.Column="2" Text="0" Foreground="#FFF0F0F0" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" FontSize="18" FontWeight="Bold" Opacity="0.9"/>
+        <Slider x:Name="slider" Thumb.DragCompleted="slider_DragCompleted" Grid.Row="2" Grid.Column="0" Maximum="8" Minimum="4" Value="4" SmallChange="1" IsSnapToTickEnabled="True" IsSelectionRangeEnabled="True" Ticks="{x:Null}" TickPlacement="BottomRight" Focusable="False" Background="{x:Null}" Foreground="#FF5B5B5B" Margin="2"/>
     </Grid>
 </Window>
     

@@ -22,13 +22,13 @@ namespace _2048Game
             Down
         }
 
-        public int AnimationTimeMS = 200;
-
         private Element curTarget;
         private Point curDest;
         private Game mainWindow;
         private Storyboard storyboard;
         private bool isMultiplyValue;
+
+        private int AnimationTimeMS = 200;
 
         public Animations(Game window)
         {
@@ -208,6 +208,10 @@ namespace _2048Game
                 (int)(curDest.Y / mainWindow.CellHeight), (int)(curDest.X / mainWindow.CellWidth));
         }
 
+        /// <summary>
+        /// Анимация изменения прозрачности объекта
+        /// </summary>
+        /// <param name="Target">Объект</param>
         public static void OpacityAnimation(UIElement Target)
         {
             var opacityAnim = new DoubleAnimation
