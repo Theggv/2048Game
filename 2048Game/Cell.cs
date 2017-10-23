@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using System.Windows.Media.Effects;
 
 namespace _2048Game
 {
@@ -37,7 +32,7 @@ namespace _2048Game
         public int Value
         {
             get { return int.Parse(textBlock.Text); }
-            set => textBlock.Text = value.ToString();
+            set { textBlock.Text = value.ToString(); }
         }
 
         /// <summary>
@@ -52,64 +47,59 @@ namespace _2048Game
 
         public Element()
         {
-            this.BorderBrush = Brushes.Black;
-            this.BorderThickness = new Thickness(1);
-            this.CornerRadius = new CornerRadius(12);
+            BorderBrush = new SolidColorBrush(Color.FromRgb(50, 50, 50));
+            CornerRadius = new CornerRadius(5);
 
             textBlock = new TextBlock
             {
                 TextAlignment = TextAlignment.Center,
-                TextWrapping = TextWrapping.Wrap,
-                Effect = new DropShadowEffect
-                {
-                    BlurRadius = 30,
-                    RenderingBias = RenderingBias.Quality,
-                    ShadowDepth = 1
-                },
+                TextWrapping = TextWrapping.NoWrap,
                 FontSize = 18,
+                FontWeight = FontWeights.DemiBold,
+                FontFamily = new FontFamily("Verdana"),
                 VerticalAlignment = VerticalAlignment.Center,
-                Foreground = Brushes.White
             };
-            this.Child = textBlock;
+            Child = textBlock;
 
-            this.Value = new Random().Next(0, 11) != 10 ? 2 : 4;
+            Value = new Random().Next(0, 11) != 10 ? 2 : 4;
             UpdateColor();
         }
 
         public void UpdateColor()
         {
-            if(this.Value == 2)
+            if (Value <= 4)
+                textBlock.Foreground = new SolidColorBrush(Color.FromRgb(25, 25, 25));
+            else
             {
-                this.Background = new SolidColorBrush(Color.FromRgb(200, 200, 200));
+                textBlock.Foreground = Brushes.White;
+                if (Value >= 1024)
+                    textBlock.FontSize = 16;
             }
-            else if(this.Value == 4 || this.Value == 8)
-            {
-                this.Background = new SolidColorBrush(Color.FromRgb(255, 200, 125));
-            }
-            else if (this.Value == 16 || this.Value == 32)
-            {
-                this.Background = new SolidColorBrush(Color.FromRgb(255, 150, 80));
-            }
-            else if (this.Value == 64 || this.Value == 128)
-            {
-                this.Background = new SolidColorBrush(Color.FromRgb(255, 128, 70));
-            }
-            else if (this.Value == 256 || this.Value == 512)
-            {
-                this.Background = new SolidColorBrush(Color.FromRgb(255, 128, 0));
-            }
-            else if (this.Value == 1024 || this.Value == 2048)
-            {
-                this.Background = new SolidColorBrush(Color.FromRgb(255, 255, 0));
-            }
-            else if (this.Value == 4096 || this.Value == 8192)
-            {
-                this.Background = new SolidColorBrush(Color.FromRgb(0, 0, 0));
-            }
-            else if (this.Value == 16384 || this.Value == 32768)
-            {
-                this.Background = new SolidColorBrush(Color.FromRgb(0, 0, 0));
-            }
+
+            if (Value == 2)
+                Background = new SolidColorBrush(Color.FromRgb(240, 230, 215));
+            else if (Value == 4)
+                Background = new SolidColorBrush(Color.FromRgb(235, 225, 200));
+            else if (Value == 8)
+                Background = new SolidColorBrush(Color.FromRgb(240, 170, 120));
+            else if (Value == 16)
+                Background = new SolidColorBrush(Color.FromRgb(250, 150, 100));
+            else if (Value == 32)
+                Background = new SolidColorBrush(Color.FromRgb(245, 124, 95));
+            else if (Value == 64)
+                Background = new SolidColorBrush(Color.FromRgb(245, 95, 60));
+            else if (Value == 128)
+                Background = new SolidColorBrush(Color.FromRgb(240, 205, 115));
+            else if (Value == 256)
+                Background = new SolidColorBrush(Color.FromRgb(235, 200, 100));
+            else if (Value == 512)
+                Background = new SolidColorBrush(Color.FromRgb(240, 200, 80));
+            else if (Value == 1024)
+                Background = new SolidColorBrush(Color.FromRgb(235, 195, 65));
+            else if (Value == 2048)
+                Background = new SolidColorBrush(Color.FromRgb(240, 195, 45));
+            else if (Value >= 4096)
+                Background = new SolidColorBrush(Color.FromRgb(0, 0, 0));
         }
     }
 }

@@ -26,11 +26,11 @@ namespace _2048Game
 
         private Element curTarget;
         private Point curDest;
-        private MainWindow mainWindow;
+        private Game mainWindow;
         private Storyboard storyboard;
         private bool isMultiplyValue;
 
-        public Animations(MainWindow window)
+        public Animations(Game window)
         {
             mainWindow = window;
         }
@@ -56,6 +56,13 @@ namespace _2048Game
             };
         }
 
+        /// <summary>
+        /// Анимация движения клетки
+        /// </summary>
+        /// <param name="Target">Объект</param>
+        /// <param name="Destination">Точка назначения</param>
+        /// <param name="direction">Направление</param>
+        /// <param name="isMult">Удваивать значение клетки</param>
         public void SetMoveAnimation(Element Target, Point Destination, Direction direction, bool isMult = false)
         {
             curTarget = Target;
@@ -93,16 +100,124 @@ namespace _2048Game
             storyboard.Begin();
         }
 
+        /// <summary>
+        /// Анимация появления клетки
+        /// </summary>
+        /// <param name="Target">Объект</param>
+        public void SetSpawnAnimation(Element Target)
+        {
+            var scaleTransform = new ScaleTransform();
+            Target.LayoutTransform = scaleTransform;
+
+            var animationX = new DoubleAnimation
+            {
+                From = 0,
+                To = 1.0,
+                Duration = TimeSpan.FromMilliseconds(AnimationTimeMS / 4)
+            };
+            var animationY = new DoubleAnimation
+            {
+                From = 0,
+                To = 1.0,
+                Duration = TimeSpan.FromMilliseconds(AnimationTimeMS / 4)
+            };
+
+            scaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, animationX);
+            scaleTransform.BeginAnimation(ScaleTransform.ScaleYProperty, animationY);
+
+            var offsetTranform = new TranslateTransform();
+            Target.RenderTransform = offsetTranform;
+
+            var offsetX = new DoubleAnimation
+            {
+                From = mainWindow.CellWidth / 2,
+                To = 0,
+                Duration = TimeSpan.FromMilliseconds(AnimationTimeMS / 4)
+            };
+            var offsetY = new DoubleAnimation
+            {
+                From = mainWindow.CellHeight / 2,
+                To = 0,
+                Duration = TimeSpan.FromMilliseconds(AnimationTimeMS / 4)
+            };
+
+            offsetTranform.BeginAnimation(TranslateTransform.XProperty, offsetX);
+            offsetTranform.BeginAnimation(TranslateTransform.YProperty, offsetY);
+        }
+
+        /// <summary>
+        /// Анимация объединения клеток
+        /// </summary>
+        /// <param name="Target">Объект</param>
+        public void SetMergeAnimation(Element Target)
+        {
+            var scaleTransform = new ScaleTransform();
+            Target.LayoutTransform = scaleTransform;
+
+            var animationX = new DoubleAnimation
+            {
+                From = 1.0,
+                To = 1.2,
+                Duration = TimeSpan.FromMilliseconds(AnimationTimeMS / 4),
+                AutoReverse = true
+            };
+            var animationY = new DoubleAnimation
+            {
+                From = 1.0,
+                To = 1.2,
+                Duration = TimeSpan.FromMilliseconds(AnimationTimeMS / 4),
+                AutoReverse = true
+            };
+
+            scaleTransform.BeginAnimation(ScaleTransform.ScaleXProperty, animationX);
+            scaleTransform.BeginAnimation(ScaleTransform.ScaleYProperty, animationY);
+
+            var offsetTranform = new TranslateTransform();
+            Target.RenderTransform = offsetTranform;
+
+            var offsetX = new DoubleAnimation
+            {
+                From = 0,
+                To = -mainWindow.CellWidth * 0.1,
+                Duration = TimeSpan.FromMilliseconds(AnimationTimeMS / 4),
+                AutoReverse = true
+            };
+            var offsetY = new DoubleAnimation
+            {
+                From = 0,
+                To = -mainWindow.CellHeight * 0.1,
+                Duration = TimeSpan.FromMilliseconds(AnimationTimeMS / 4),
+                AutoReverse = true
+            };
+
+            offsetTranform.BeginAnimation(TranslateTransform.XProperty, offsetX);
+            offsetTranform.BeginAnimation(TranslateTransform.YProperty, offsetY);
+        }
+
         private void Animation_Completed(object sender, EventArgs e)
         {
             if (isMultiplyValue)
             {
                 curTarget.Value *= 2;
                 curTarget.UpdateColor();
-                MainWindow.Score += curTarget.Value;
+                Game.Score += curTarget.Value;
+
+                SetMergeAnimation(curTarget);
             }
             mainWindow.UpdateInfo(curTarget.row, curTarget.column,
-                (int)(curDest.Y / mainWindow.CellHeigth), (int)(curDest.X / mainWindow.CellWidth));
+                (int)(curDest.Y / mainWindow.CellHeight), (int)(curDest.X / mainWindow.CellWidth));
+        }
+
+        public static void OpacityAnimation(UIElement Target)
+        {
+            var opacityAnim = new DoubleAnimation
+            {
+                From = 0,
+                To = 1,
+                Duration = TimeSpan.FromSeconds(1.5)
+            };
+
+            Target.BeginAnimation(UIElement.OpacityProperty, opacityAnim);
         }
     }
 }
