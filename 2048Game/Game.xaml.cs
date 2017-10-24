@@ -29,29 +29,31 @@ namespace _2048Game
 
         GameState gameState = GameState.Started;
 
-        public static int Size = 4;
-        public Cell[,] cell = new Cell[Size, Size];
-        public Element[,] element = new Element[Size, Size];
+        public static int gSize = 4; // Текущий размер поля
+        public static int gChangedSize = 4; // Текущий размер поля
+
+        public Cell[,] gCell = new Cell[gSize, gSize]; // Игровое поле
+        public Element[,] gElement = new Element[gSize, gSize]; // Клетки
 
         public double CellWidth; // Длина Клетки
         public double CellHeight; // Ширина Клетки
         public double CellOffset = 4; // Сдвиг клетки относительно левого верхнего угла
-        private static int numAnims = 0;
+        private static int numAnims = 0; // Количество проигрывающихся анимаций в данный момент
 
-        public static int Score = 0;
-        public static int PreviousScore = 0;
-        public static int BestScore = 0;
+        public static int Score = 0; // Счёт
+        public static int PreviousScore = 0; // Счёт, используемый для анимации
+        public static int BestScore = 0; // Лучший счёт
 
-        MainWindow mainWindow;
-        public bool IsInterfaceLocked = false;
+        MainWindow mainWindow; // Главное окно
+        public bool IsInterfaceLocked = false; // Блокировка интерфейса
 
         public Game(MainWindow window)
         {
             InitializeComponent();
 
             mainWindow = window;
-            mainWindow.Width = 55 * Size + 10;
-            mainWindow.Height = 55 * Size + 90;
+            mainWindow.Width = 55 * gSize + 10;
+            mainWindow.Height = 55 * gSize + 90;
             mainWindow.UpdateLayout();
 
             Score = 0;
@@ -62,14 +64,14 @@ namespace _2048Game
 
         private void FieldCanvas_Loaded(object sender, RoutedEventArgs e)
         {
-            CellWidth = fieldCanvas.ActualWidth / Size;
-            CellHeight = fieldCanvas.ActualHeight / Size;
+            CellWidth = fieldCanvas.ActualWidth / gSize;
+            CellHeight = fieldCanvas.ActualHeight / gSize;
 
-            for (int i = 0; i < Size; i++)
+            for (int i = 0; i < gSize; i++)
             {
-                for (int j = 0; j < Size; j++)
+                for (int j = 0; j < gSize; j++)
                 {
-                    cell[i, j] = new Cell(new Point(CellWidth * j + CellOffset, CellHeight * i + CellOffset),
+                    gCell[i, j] = new Cell(new Point(CellWidth * j + CellOffset, CellHeight * i + CellOffset),
                         new Point(CellWidth * (j + 1) - CellOffset, CellHeight * (i + 1) - CellOffset));
 
                     var border = new Border
@@ -137,23 +139,23 @@ namespace _2048Game
                     GameRestart();
                     break;
                 case Key.Left:
-                    for (int i = 0; i < Size; i++)  // Элемент Столбца
+                    for (int i = 0; i < gSize; i++)  // Элемент Столбца
                     {
-                        int[] arrValues = new int[Size];
-                        for (int j = 0; j < Size; j++)
+                        int[] arrValues = new int[gSize];
+                        for (int j = 0; j < gSize; j++)
                         {
-                            if (cell[i, j].IsFree)
+                            if (gCell[i, j].IsFree)
                                 arrValues[j] = 0;
                             else
-                                arrValues[j] = element[i, j].Value;
+                                arrValues[j] = gElement[i, j].Value;
                         }
-                        for (int k = 0; k < Size; k++)
+                        for (int k = 0; k < gSize; k++)
                         {
                             #region Поиск Первого ненулевого элемента
                             int FromCell = -1; // Первый ненулевой элемент
-                            for (int j = k; j < Size; j++)
+                            for (int j = k; j < gSize; j++)
                             {
-                                if (!cell[i, j].IsFree)
+                                if (!gCell[i, j].IsFree)
                                 {
                                     FromCell = j;
                                     break;
@@ -169,7 +171,7 @@ namespace _2048Game
                             int FreeCell = FromCell; // Первая свободная клетка
                             for (int j = FromCell - 1; j >= 0; j--)
                             {
-                                if (cell[i, j].IsFree)
+                                if (gCell[i, j].IsFree)
                                     FreeCell--;
                                 else
                                     break;
@@ -178,9 +180,9 @@ namespace _2048Game
 
                             #region Поиск Стакующегося элемента
                             int MergeCell = FromCell; // Второй элемент со значением FromCell
-                            for (int j = FromCell + 1; j < Size; j++)
+                            for (int j = FromCell + 1; j < gSize; j++)
                             {
-                                if (!cell[i, j].IsFree)
+                                if (!gCell[i, j].IsFree)
                                 {
                                     if (arrValues[FromCell] == arrValues[j])
                                     {
@@ -199,7 +201,7 @@ namespace _2048Game
                             {
                                 if (FromCell != FreeCell)
                                 {
-                                    MoveCell(ref element[i, FromCell], cell[i, FreeCell].startPoint,
+                                    MoveCell(ref gElement[i, FromCell], gCell[i, FreeCell].startPoint,
                                         Animations.Direction.Left);
 
                                     arrValues[FreeCell] = arrValues[FromCell];
@@ -210,8 +212,8 @@ namespace _2048Game
                             {
                                 if (FromCell != FreeCell) // Если нужно двигать оба элемента
                                 {
-                                    MoveAndMergeCells(ref element[i, FromCell], ref element[i, MergeCell],
-                                        cell[i, FreeCell].startPoint, Animations.Direction.Left);
+                                    MoveAndMergeCells(ref gElement[i, FromCell], ref gElement[i, MergeCell],
+                                        gCell[i, FreeCell].startPoint, Animations.Direction.Left);
 
                                     arrValues[FreeCell] = arrValues[FromCell] * 2;
                                     arrValues[FromCell] = 0;
@@ -219,7 +221,7 @@ namespace _2048Game
                                 }
                                 else // Если нужно двигать одни элемент
                                 {
-                                    MergeCells(ref element[i, MergeCell], cell[i, FreeCell].startPoint,
+                                    MergeCells(ref gElement[i, MergeCell], gCell[i, FreeCell].startPoint,
                                         Animations.Direction.Left);
 
                                     arrValues[FreeCell] = arrValues[FromCell] * 2;
@@ -230,23 +232,23 @@ namespace _2048Game
                     }
                     break;
                 case Key.Up:
-                    for (int j = 0; j < Size; j++)  // Элемент Строки
+                    for (int j = 0; j < gSize; j++)  // Элемент Строки
                     {
-                        int[] arrValues = new int[Size];
-                        for (int i = 0; i < Size; i++)
+                        int[] arrValues = new int[gSize];
+                        for (int i = 0; i < gSize; i++)
                         {
-                            if (cell[i, j].IsFree)
+                            if (gCell[i, j].IsFree)
                                 arrValues[i] = 0;
                             else
-                                arrValues[i] = element[i, j].Value;
+                                arrValues[i] = gElement[i, j].Value;
                         }
-                        for (int k = 0; k < Size; k++)
+                        for (int k = 0; k < gSize; k++)
                         {
                             #region Поиск Первого ненулевого элемента
                             int FromCell = -1; // Первый ненулевой элемент
-                            for (int i = k; i < Size; i++)
+                            for (int i = k; i < gSize; i++)
                             {
-                                if (!cell[i, j].IsFree)
+                                if (!gCell[i, j].IsFree)
                                 {
                                     FromCell = i;
                                     break;
@@ -262,7 +264,7 @@ namespace _2048Game
                             int FreeCell = FromCell; // Первая свободная клетка
                             for (int i = FromCell - 1; i >= 0; i--)
                             {
-                                if (cell[i, j].IsFree)
+                                if (gCell[i, j].IsFree)
                                     FreeCell--;
                                 else
                                     break;
@@ -271,9 +273,9 @@ namespace _2048Game
 
                             #region Поиск Стакующегося элемента
                             int MergeCell = FromCell; // Второй элемент со значением FromCell
-                            for (int i = FromCell + 1; i < Size; i++)
+                            for (int i = FromCell + 1; i < gSize; i++)
                             {
-                                if (!cell[i, j].IsFree)
+                                if (!gCell[i, j].IsFree)
                                 {
                                     if (arrValues[FromCell] == arrValues[i])
                                     {
@@ -292,7 +294,7 @@ namespace _2048Game
                             {
                                 if (FromCell != FreeCell)
                                 {
-                                    MoveCell(ref element[FromCell, j], cell[FreeCell, j].startPoint,
+                                    MoveCell(ref gElement[FromCell, j], gCell[FreeCell, j].startPoint,
                                         Animations.Direction.Up);
 
                                     arrValues[FreeCell] = arrValues[FromCell];
@@ -303,8 +305,8 @@ namespace _2048Game
                             {
                                 if (FromCell != FreeCell) // Если нужно двигать оба элемента
                                 {
-                                    MoveAndMergeCells(ref element[FromCell, j], ref element[MergeCell, j],
-                                        cell[FreeCell, j].startPoint, Animations.Direction.Up);
+                                    MoveAndMergeCells(ref gElement[FromCell, j], ref gElement[MergeCell, j],
+                                        gCell[FreeCell, j].startPoint, Animations.Direction.Up);
 
                                     arrValues[FreeCell] = arrValues[FromCell] * 2;
                                     arrValues[FromCell] = 0;
@@ -312,7 +314,7 @@ namespace _2048Game
                                 }
                                 else // Если нужно двигать одни элемент
                                 {
-                                    MergeCells(ref element[MergeCell, j], cell[FreeCell, j].startPoint,
+                                    MergeCells(ref gElement[MergeCell, j], gCell[FreeCell, j].startPoint,
                                         Animations.Direction.Up);
 
                                     arrValues[FreeCell] = arrValues[FromCell] * 2;
@@ -323,23 +325,23 @@ namespace _2048Game
                     }
                     break;
                 case Key.Right:
-                    for (int i = 0; i < Size; i++)  // Элемент Столбца
+                    for (int i = 0; i < gSize; i++)  // Элемент Столбца
                     {
-                        int[] arrValues = new int[Size];
-                        for (int j = 0; j < Size; j++)
+                        int[] arrValues = new int[gSize];
+                        for (int j = 0; j < gSize; j++)
                         {
-                            if (cell[i, j].IsFree)
+                            if (gCell[i, j].IsFree)
                                 arrValues[j] = 0;
                             else
-                                arrValues[j] = element[i, j].Value;
+                                arrValues[j] = gElement[i, j].Value;
                         }
-                        for (int k = Size - 1; k >= 0; k--)
+                        for (int k = gSize - 1; k >= 0; k--)
                         {
                             #region Поиск Первого ненулевого элемента
                             int FromCell = -1; // Первый ненулевой элемент
                             for (int j = k; j >= 0; j--)
                             {
-                                if (!cell[i, j].IsFree)
+                                if (!gCell[i, j].IsFree)
                                 {
                                     FromCell = j;
                                     break;
@@ -353,9 +355,9 @@ namespace _2048Game
 
                             #region Поиск Первого нулевого элемента
                             int FreeCell = FromCell; // Первая свободная клетка
-                            for (int j = FromCell + 1; j < Size; j++)
+                            for (int j = FromCell + 1; j < gSize; j++)
                             {
-                                if (cell[i, j].IsFree)
+                                if (gCell[i, j].IsFree)
                                     FreeCell++;
                                 else
                                     break;
@@ -366,7 +368,7 @@ namespace _2048Game
                             int MergeCell = FromCell; // Второй элемент со значением FromCell
                             for (int j = FromCell - 1; j >= 0; j--)
                             {
-                                if (!cell[i, j].IsFree)
+                                if (!gCell[i, j].IsFree)
                                 {
                                     if (arrValues[FromCell] == arrValues[j])
                                     {
@@ -385,7 +387,7 @@ namespace _2048Game
                             {
                                 if (FromCell != FreeCell)
                                 {
-                                    MoveCell(ref element[i, FromCell], cell[i, FreeCell].startPoint,
+                                    MoveCell(ref gElement[i, FromCell], gCell[i, FreeCell].startPoint,
                                         Animations.Direction.Left);
 
                                     arrValues[FreeCell] = arrValues[FromCell];
@@ -396,8 +398,8 @@ namespace _2048Game
                             {
                                 if (FromCell != FreeCell) // Если нужно двигать оба элемента
                                 {
-                                    MoveAndMergeCells(ref element[i, FromCell], ref element[i, MergeCell],
-                                        cell[i, FreeCell].startPoint, Animations.Direction.Left);
+                                    MoveAndMergeCells(ref gElement[i, FromCell], ref gElement[i, MergeCell],
+                                        gCell[i, FreeCell].startPoint, Animations.Direction.Left);
 
                                     arrValues[FreeCell] = arrValues[FromCell] * 2;
                                     arrValues[FromCell] = 0;
@@ -405,7 +407,7 @@ namespace _2048Game
                                 }
                                 else // Если нужно двигать одни элемент
                                 {
-                                    MergeCells(ref element[i, MergeCell], cell[i, FreeCell].startPoint,
+                                    MergeCells(ref gElement[i, MergeCell], gCell[i, FreeCell].startPoint,
                                         Animations.Direction.Left);
 
                                     arrValues[FreeCell] = arrValues[FromCell] * 2;
@@ -416,24 +418,24 @@ namespace _2048Game
                     }
                     break;
                 case Key.Down:
-                    for (int j = 0; j < Size; j++)  // Элемент Строки
+                    for (int j = 0; j < gSize; j++)  // Элемент Строки
                     {
-                        int[] arrValues = new int[Size];
-                        for (int i = 0; i < Size; i++)
+                        int[] arrValues = new int[gSize];
+                        for (int i = 0; i < gSize; i++)
                         {
-                            if (cell[i, j].IsFree)
+                            if (gCell[i, j].IsFree)
                                 arrValues[i] = 0;
                             else
-                                arrValues[i] = element[i, j].Value;
+                                arrValues[i] = gElement[i, j].Value;
                         }
 
-                        for (int k = Size - 1; k >= 0; k--)
+                        for (int k = gSize - 1; k >= 0; k--)
                         {
                             #region Поиск Первого ненулевого элемента
                             int FromCell = -1; // Первый ненулевой элемент
                             for (int i = k; i >= 0; i--)
                             {
-                                if (!cell[i, j].IsFree)
+                                if (!gCell[i, j].IsFree)
                                 {
                                     FromCell = i;
                                     break;
@@ -447,9 +449,9 @@ namespace _2048Game
 
                             #region Поиск Первого нулевого элемента
                             int FreeCell = FromCell; // Первая свободная клетка
-                            for (int i = FromCell + 1; i < Size; i++)
+                            for (int i = FromCell + 1; i < gSize; i++)
                             {
-                                if (cell[i, j].IsFree)
+                                if (gCell[i, j].IsFree)
                                     FreeCell++;
                                 else
                                     break;
@@ -460,7 +462,7 @@ namespace _2048Game
                             int MergeCell = FromCell; // Второй элемент со значением FromCell
                             for (int i = FromCell - 1; i >= 0; i--)
                             {
-                                if (!cell[i, j].IsFree)
+                                if (!gCell[i, j].IsFree)
                                 {
                                     if (arrValues[FromCell] == arrValues[i])
                                     {
@@ -479,7 +481,7 @@ namespace _2048Game
                             {
                                 if (FromCell != FreeCell)
                                 {
-                                    MoveCell(ref element[FromCell, j], cell[FreeCell, j].startPoint,
+                                    MoveCell(ref gElement[FromCell, j], gCell[FreeCell, j].startPoint,
                                         Animations.Direction.Up);
 
                                     arrValues[FreeCell] = arrValues[FromCell];
@@ -490,8 +492,8 @@ namespace _2048Game
                             {
                                 if (FromCell != FreeCell) // Если нужно двигать оба элемента
                                 {
-                                    MoveAndMergeCells(ref element[FromCell, j], ref element[MergeCell, j],
-                                        cell[FreeCell, j].startPoint, Animations.Direction.Up);
+                                    MoveAndMergeCells(ref gElement[FromCell, j], ref gElement[MergeCell, j],
+                                        gCell[FreeCell, j].startPoint, Animations.Direction.Up);
 
                                     arrValues[FreeCell] = arrValues[FromCell] * 2;
                                     arrValues[FromCell] = 0;
@@ -499,7 +501,7 @@ namespace _2048Game
                                 }
                                 else // Если нужно двигать одни элемент
                                 {
-                                    MergeCells(ref element[MergeCell, j], cell[FreeCell, j].startPoint,
+                                    MergeCells(ref gElement[MergeCell, j], gCell[FreeCell, j].startPoint,
                                         Animations.Direction.Up);
 
                                     arrValues[FreeCell] = arrValues[FromCell] * 2;
@@ -529,24 +531,24 @@ namespace _2048Game
             var anim = new Animations(this);
             anim.SetMoveAnimation(From, To, d, IsMultiply);
 
-            cell[From.row, From.column].IsFree = true;
-            cell[(int)(To.Y / CellHeight), (int)(To.X / CellWidth)].IsFree = false;
+            gCell[From.row, From.column].IsFree = true;
+            gCell[(int)(To.Y / CellHeight), (int)(To.X / CellWidth)].IsFree = false;
         }
 
         public void UpdateInfo(int xFrom, int yFrom, int xTo, int yTo)
         {
-            DeleteElement(ref element[xTo, yTo]);
-            element[xTo, yTo] = element[xFrom, yFrom];
+            DeleteElement(ref gElement[xTo, yTo]);
+            gElement[xTo, yTo] = gElement[xFrom, yFrom];
             fieldCanvas.UpdateLayout();
 
-            DeleteElement(ref element[xFrom, yFrom]);
+            DeleteElement(ref gElement[xFrom, yFrom]);
 
-            fieldCanvas.Children.Remove(element[xTo, yTo]);
-            fieldCanvas.Children.Add(element[xTo, yTo]);
+            fieldCanvas.Children.Remove(gElement[xTo, yTo]);
+            fieldCanvas.Children.Add(gElement[xTo, yTo]);
 
-            element[xTo, yTo].Visibility = Visibility.Visible;
-            element[xTo, yTo].row = xTo;
-            element[xTo, yTo].column = yTo;
+            gElement[xTo, yTo].Visibility = Visibility.Visible;
+            gElement[xTo, yTo].row = xTo;
+            gElement[xTo, yTo].column = yTo;
             fieldCanvas.UpdateLayout();
 
             numAnims--;
@@ -557,6 +559,10 @@ namespace _2048Game
             }
         }
 
+        /// <summary>
+        /// Удаление клетки
+        /// </summary>
+        /// <param name="element">Объект</param>
         private void DeleteElement(ref Element element)
         {
             fieldCanvas.Children.Remove(element);
@@ -564,25 +570,36 @@ namespace _2048Game
             element = null;
         }
 
+        /// <summary>
+        /// Спавн клетки в случайном месте
+        /// </summary>
         public void SpawnRandomElement()
         {
             Random rnd = new Random();
             while (true)
             {
-                int x = rnd.Next(0, Size);
-                int y = rnd.Next(0, Size);
+                int x = rnd.Next(0, gSize);
+                int y = rnd.Next(0, gSize);
 
-                if (cell[y, x].IsFree)
+                if (gCell[y, x].IsFree)
                 {
-                    element[y, x] = SpawnElement(y, x);
+                    gElement[y, x] = SpawnElement(y, x);
 
-                    cell[y, x].IsFree = false;
+                    gCell[y, x].IsFree = false;
                     break;
                 }
             }
 
+            CheckGameStatus();
+        }
+
+        /// <summary>
+        /// Проверка игры на победу / поражение.
+        /// </summary>
+        public void CheckGameStatus()
+        {
             bool HasFree = false;
-            foreach(var cell in cell)
+            foreach (var cell in gCell)
             {
                 if (cell.IsFree)
                 {
@@ -593,19 +610,19 @@ namespace _2048Game
             if (!HasFree)
             {
                 bool IsLose = true;
-                for (int i = 0; i < Size; i++)
+                for (int i = 0; i < gSize; i++)
                 {
-                    for (int j = 0; j < Size - 1; j++)
+                    for (int j = 0; j < gSize - 1; j++)
                     {
-                        if (element[i, j].Value == element[i, j + 1].Value)
+                        if (gElement[i, j].Value == gElement[i, j + 1].Value)
                             IsLose = false;
                     }
                 }
-                for (int i = 0; i < Size - 1; i++)
+                for (int i = 0; i < gSize - 1; i++)
                 {
-                    for (int j = 0; j < Size; j++)
+                    for (int j = 0; j < gSize; j++)
                     {
-                        if (element[i, j].Value == element[i + 1, j].Value)
+                        if (gElement[i, j].Value == gElement[i + 1, j].Value)
                             IsLose = false;
                     }
                 }
@@ -613,6 +630,7 @@ namespace _2048Game
                 {
                     IsInterfaceLocked = true;
                     gameState = GameState.Lose;
+
                     mainWindow.Lose();
                     return;
                 }
@@ -620,7 +638,7 @@ namespace _2048Game
 
             if (gameState != GameState.Win)
             {
-                foreach (var element in element)
+                foreach (var element in gElement)
                 {
                     if (element != null && element.Value == 2048)
                     {
@@ -636,9 +654,13 @@ namespace _2048Game
             }
         }
 
+        /// <summary>
+        /// Обновление очков
+        /// </summary>
         public void UpdateScore()
         {
             PreviousScore = Score;
+
             if (Score > BestScore)
                 BestScore = Score;
 

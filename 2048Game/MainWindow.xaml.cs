@@ -33,6 +33,7 @@ namespace _2048Game
 
         public void GameStart()
         {
+            Game.gSize = Game.gChangedSize;
             game = new Game(this);
 
             Grid.SetRow(game, 3);
@@ -81,10 +82,14 @@ namespace _2048Game
             game.IsInterfaceLocked = false;
         }
 
-        private void slider_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
+        private void buttonRestart_Click(object sender, RoutedEventArgs e)
         {
-            Game.Size = (int)slider.Value;
             GameStart();
+        }
+
+        private void slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            Game.gChangedSize = (int)slider.Value;
         }
     }
 }

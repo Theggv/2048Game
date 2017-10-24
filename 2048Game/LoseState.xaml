@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:_2048Game"
              mc:Ignorable="d" 
              d:DesignHeight="320" d:DesignWidth="240">
-    <Grid Opacity="0.8" Background="#FFB9B18A">
+    <Grid Background="#CCAEA98C">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="2*"/>
@@ -18,7 +18,19 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <TextBlock x:Name="textBlock" Text="Вы проиграли!" FontSize="20" FontFamily="Verdana" FontWeight="Bold" Foreground="#FFFFD100" Grid.ColumnSpan="3" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center"/>
-        <Button x:Name="buttonRestart" Content="Новая игра" Grid.Column="1" Grid.Row="1" Background="#FFFFD100" BorderBrush="{x:Null}" FontFamily="Verdana" FontSize="14" Click="buttonRestart_Click"/>
+        <TextBlock x:Name="textBlock" Text="Игра окончена!"
+                   FontSize="20" FontFamily="Verdana" FontWeight="Bold"
+                   Foreground="#FFFFFAEE" Grid.ColumnSpan="3" 
+                   HorizontalAlignment="Center" VerticalAlignment="Center"
+                   TextAlignment="Center" Opacity="0.9"/>
+        <Border BorderBrush="Black" BorderThickness="0" Grid.Row="1" Grid.Column="1" Opacity="1" CornerRadius="10" Background="#FF969696" Grid.RowSpan="1" Margin="2">
+            <Button Focusable="False" x:Name="buttonRestart" Content="Новая игра" FontSize="14" Foreground="#FFFFFAEE" Click="buttonRestart_Click" Background="{x:Null}" BorderBrush="{x:Null}" Padding="1" BorderThickness="0" FontWeight="Bold" IsDefault="True" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.9">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <ContentPresenter Content="{TemplateBinding Content}"/>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+        </Border>
     </Grid>
 </UserControl>

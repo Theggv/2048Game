@@ -95,7 +95,9 @@ namespace _2048Game
                     Storyboard.SetTargetProperty(animation, new PropertyPath(Canvas.TopProperty));
                     break;
             }
+
             animation.Completed += new EventHandler(Animation_Completed);
+
             storyboard.Children.Add(animation);
             storyboard.Begin();
         }
