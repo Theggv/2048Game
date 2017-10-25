@@ -128,6 +128,11 @@ namespace _2048Game
             return obj;
         }
 
+        /// <summary>
+        /// Обработка хода
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         public void Game_KeyDown(object sender, KeyEventArgs e)
         {
             if (numAnims != 0 || IsInterfaceLocked)
@@ -535,6 +540,14 @@ namespace _2048Game
             gCell[(int)(To.Y / CellHeight), (int)(To.X / CellWidth)].IsFree = false;
         }
 
+
+        /// <summary>
+        /// Одновление информации после хода
+        /// </summary>
+        /// <param name="xFrom">Столбец объекта</param>
+        /// <param name="yFrom">Строка объекта</param>
+        /// <param name="xTo">Столбец точки перемещения</param>
+        /// <param name="yTo">Строка точки перемещения</param>
         public void UpdateInfo(int xFrom, int yFrom, int xTo, int yTo)
         {
             DeleteElement(ref gElement[xTo, yTo]);
@@ -662,7 +675,9 @@ namespace _2048Game
             PreviousScore = Score;
 
             if (Score > BestScore)
+            {
                 BestScore = Score;
+            }
 
             mainWindow.blockScore.Text = Score.ToString();
             mainWindow.blockBestScore.Text = BestScore.ToString();

@@ -59,7 +59,7 @@ namespace _2048Game
             Grid.SetRowSpan(loseState, 4);
 
             mainGrid.Children.Add(loseState);
-            Animations.OpacityAnimation(loseState);
+            Animations.OpacityAnimation(loseState, 0, 1, 1.5);
         }
 
         public void Win()
@@ -72,7 +72,7 @@ namespace _2048Game
             Grid.SetRowSpan(winState, 4);
 
             mainGrid.Children.Add(winState);
-            Animations.OpacityAnimation(winState);
+            Animations.OpacityAnimation(winState, 0, 1, 1.5);
         }
 
         public void RemoveStateForm(UIElement uIElement)
