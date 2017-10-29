@@ -41,12 +41,7 @@ namespace _2048Game
         /// <param name="Target">Объект</param>
         public static void OpacityAnimation(UIElement Target, double From, double To, double Sec)
         {
-            var opacityAnim = new DoubleAnimation
-            {
-                From = From,
-                To = To,
-                Duration = TimeSpan.FromSeconds(Sec)
-            };
+            var opacityAnim = SetDoubleAnimation(From, To, Sec * 1000);
 
             Target.BeginAnimation(UIElement.OpacityProperty, opacityAnim);
         }
@@ -59,13 +54,13 @@ namespace _2048Game
         /// <param name="To">Конечное Значение</param>
         /// <param name="Sec">Время действия</param>
         /// <param name="IsReverse">Реверсировать?</param>
-        public static DoubleAnimation SetDoubleAnimation(double From, double To, double Sec, bool IsReverse = false)
+        public static DoubleAnimation SetDoubleAnimation(double From, double To, double Millisec, bool IsReverse = false)
         {
             return new DoubleAnimation
             {
                 From = From,
                 To = To,
-                Duration = TimeSpan.FromMilliseconds(Sec),
+                Duration = TimeSpan.FromMilliseconds(Millisec),
                 AutoReverse = IsReverse
             };
         }
@@ -157,6 +152,20 @@ namespace _2048Game
             var offsetY = SetDoubleAnimation(0, -mainWindow.CellWidth * 0.1, AnimationTimeMS / 4, true);
 
             offsetTranform.BeginAnimation(TranslateTransform.XProperty, offsetX);
+            offsetTranform.BeginAnimation(TranslateTransform.YProperty, offsetY);
+        }
+
+        public static void SetScoreAnimation(TextBlock Target)
+        {
+            OpacityAnimation(Target, 1, 0, 1.5);
+
+            Canvas.SetTop(Target, 25);
+
+            var offsetTranform = new TranslateTransform();
+            Target.RenderTransform = offsetTranform;
+            
+            var offsetY = SetDoubleAnimation(0, -20, 1500);
+            
             offsetTranform.BeginAnimation(TranslateTransform.YProperty, offsetY);
         }
 

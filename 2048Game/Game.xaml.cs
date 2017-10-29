@@ -64,6 +64,10 @@ namespace _2048Game
 
         private void FieldCanvas_Loaded(object sender, RoutedEventArgs e)
         {
+            Canvas.SetLeft(mainWindow.curScore, mainWindow.scoreCanvas.ActualWidth * 0.3);
+            Canvas.SetLeft(mainWindow.bestScore, mainWindow.scoreCanvas.ActualWidth * 0.8);
+            mainWindow.UpdateLayout();
+
             CellWidth = fieldCanvas.ActualWidth / gSize;
             CellHeight = fieldCanvas.ActualHeight / gSize;
 
@@ -672,10 +676,18 @@ namespace _2048Game
         /// </summary>
         public void UpdateScore()
         {
+            if(Score > PreviousScore)
+            {
+                mainWindow.curScore.Text = "+" + (Score - PreviousScore).ToString();
+                Animations.SetScoreAnimation(mainWindow.curScore);
+            }
             PreviousScore = Score;
 
             if (Score > BestScore)
             {
+                mainWindow.bestScore.Text = "+" + (Score - BestScore).ToString();
+                Animations.SetScoreAnimation(mainWindow.bestScore);
+
                 BestScore = Score;
             }
 
