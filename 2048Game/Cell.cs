@@ -9,19 +9,10 @@ namespace _2048Game
     {
         public bool IsFree = true;
         public Point startPoint;
-        public Point endPoint;
 
-        public Cell(Point start, Point end, bool isFree = true)
+        public Cell(Point start, bool isFree = true)
         {
             startPoint = start;
-            endPoint = end;
-            IsFree = isFree;
-        }
-
-        public Cell(bool isFree = true)
-        {
-            startPoint = new Point(0, 0);
-            endPoint = new Point(0, 0);
             IsFree = isFree;
         }
     }

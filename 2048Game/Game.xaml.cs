@@ -75,8 +75,7 @@ namespace _2048Game
             {
                 for (int j = 0; j < gSize; j++)
                 {
-                    gCell[i, j] = new Cell(new Point(CellWidth * j + CellOffset, CellHeight * i + CellOffset),
-                        new Point(CellWidth * (j + 1) - CellOffset, CellHeight * (i + 1) - CellOffset));
+                    gCell[i, j] = new Cell(new Point(CellWidth * j + CellOffset, CellHeight * i + CellOffset));
 
                     var border = new Border
                     {
