@@ -51,26 +51,31 @@ namespace _2048Game
         {
             InitializeComponent();
 
+            // Задание размеров окна
             mainWindow = window;
             mainWindow.Width = 55 * gSize + 10;
             mainWindow.Height = 55 * gSize + 90;
             mainWindow.UpdateLayout();
 
+            // Обнуление очков
             Score = 0;
             PreviousScore = 0;
 
             UpdateScore();
         }
 
+        // Инициализация поля
         private void FieldCanvas_Loaded(object sender, RoutedEventArgs e)
         {
             Canvas.SetLeft(mainWindow.curScore, mainWindow.scoreCanvas.ActualWidth * 0.3);
             Canvas.SetLeft(mainWindow.bestScore, mainWindow.scoreCanvas.ActualWidth * 0.8);
             mainWindow.UpdateLayout();
 
+            // Задание размеров ячейки
             CellWidth = fieldCanvas.ActualWidth / gSize;
             CellHeight = fieldCanvas.ActualHeight / gSize;
 
+            // 
             for (int i = 0; i < gSize; i++)
             {
                 for (int j = 0; j < gSize; j++)
@@ -91,11 +96,13 @@ namespace _2048Game
                     fieldCanvas.UpdateLayout();
                 }
             }
-
+            
+            // Спавним 2 элемента на поле
             SpawnRandomElement();
             SpawnRandomElement();
         }
 
+        // Рестарт поля
         private void GameRestart()
         {
             fieldCanvas = new Canvas
@@ -109,7 +116,13 @@ namespace _2048Game
             fieldCanvas.Loaded += FieldCanvas_Loaded;
             fieldCanvas.UpdateLayout();
         }
-
+    
+        /// <summary>
+        /// Спавн элемента по заданным координатам
+        /// </summary>
+        /// <param name="x">Столбец</param>
+        /// <param name="y">Строка</param>
+        /// <returns>Элемент</returns>
         private Element SpawnElement(int x, int y)
         {
             var obj = new Element
@@ -522,17 +535,37 @@ namespace _2048Game
             }
         }
 
+        /// <summary>
+        /// Передвижение и объединение двух элементов
+        /// </summary>
+        /// <param name="From">Первый элемент</param>
+        /// <param name="Dest">Второй элемент</param>
+        /// <param name="To">Место перемещения</param>
+        /// <param name="d">Направвление</param>
         public void MoveAndMergeCells(ref Element From, ref Element Dest, Point To, Animations.Direction d)
         {
             MoveCell(ref From, To, d);
             MoveCell(ref Dest, To, d, true);
         }
 
+        /// <summary>
+        /// Объединение двух элементов
+        /// </summary>
+        /// <param name="Dest">Элемент</param>
+        /// <param name="To">Место перемещения</param>
+        /// <param name="d">Направление</param>
         public void MergeCells(ref Element Dest, Point To, Animations.Direction d)
         {
             MoveCell(ref Dest, To, d, true);
         }
 
+        /// <summary>
+        /// Перемещение элемента
+        /// </summary>
+        /// <param name="From">Элемент</param>
+        /// <param name="To">Точка перемещения</param>
+        /// <param name="d">Направление</param>
+        /// <param name="IsMultiply">Увеличивать ли кол-во очков</param>
         public void MoveCell(ref Element From, Point To, Animations.Direction d, bool IsMultiply = false)
         {
             numAnims++;
@@ -553,21 +586,26 @@ namespace _2048Game
         /// <param name="yTo">Строка точки перемещения</param>
         public void UpdateInfo(int xFrom, int yFrom, int xTo, int yTo)
         {
+            // Удаляем элемент в точке перемещения и присваиваем ему элемент, который мы перемещали
             DeleteElement(ref gElement[xTo, yTo]);
             gElement[xTo, yTo] = gElement[xFrom, yFrom];
             fieldCanvas.UpdateLayout();
 
+            // Удаляем элемент, который перемещали
             DeleteElement(ref gElement[xFrom, yFrom]);
 
+            // Пересоздаем элемент в точке перемещения
             fieldCanvas.Children.Remove(gElement[xTo, yTo]);
             fieldCanvas.Children.Add(gElement[xTo, yTo]);
 
+            // Присваиваем свойства
             gElement[xTo, yTo].Visibility = Visibility.Visible;
             gElement[xTo, yTo].row = xTo;
             gElement[xTo, yTo].column = yTo;
             fieldCanvas.UpdateLayout();
 
             numAnims--;
+            // Если все анимации закончились, то спавним новый элемент в случайной позиции
             if (numAnims == 0)
             {
                 SpawnRandomElement();
@@ -615,6 +653,7 @@ namespace _2048Game
         public void CheckGameStatus()
         {
             bool HasFree = false;
+            // Проверка на свободность поля
             foreach (var cell in gCell)
             {
                 if (cell.IsFree)
@@ -626,6 +665,7 @@ namespace _2048Game
             if (!HasFree)
             {
                 bool IsLose = true;
+                // Проверка строк на наличие ходов
                 for (int i = 0; i < gSize; i++)
                 {
                     for (int j = 0; j < gSize - 1; j++)
@@ -634,6 +674,7 @@ namespace _2048Game
                             IsLose = false;
                     }
                 }
+                // Проверка столбцов на наличие ходов
                 for (int i = 0; i < gSize - 1; i++)
                 {
                     for (int j = 0; j < gSize; j++)
@@ -642,6 +683,7 @@ namespace _2048Game
                             IsLose = false;
                     }
                 }
+                // Если ходов нет, то блокируем ввод, выводим поражение
                 if (IsLose)
                 {
                     IsInterfaceLocked = true;
@@ -652,8 +694,10 @@ namespace _2048Game
                 }
             }
 
+            // Если игра ещё не выйграна, проверка на победу
             if (gameState != GameState.Win)
             {
+                // Проверка на наличие клетки со значением 2048
                 foreach (var element in gElement)
                 {
                     if (element != null && element.Value == 2048)
@@ -662,6 +706,7 @@ namespace _2048Game
                         break;
                     }
                 }
+                // Если такая клетка есть, вывод победы
                 if (gameState == GameState.Win)
                 {
                     IsInterfaceLocked = true;

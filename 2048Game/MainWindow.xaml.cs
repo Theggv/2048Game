@@ -31,6 +31,9 @@ namespace _2048Game
             GameStart();
         }
 
+        /// <summary>
+        /// Инициализация игрового поля
+        /// </summary>
         public void GameStart()
         {
             Game.gSize = Game.gChangedSize;
@@ -43,12 +46,20 @@ namespace _2048Game
             game.UpdateLayout();
         }
 
+        /// <summary>
+        /// Обработка нажатий
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
             if (game != null)
                 game.Game_KeyDown(sender, e);
         }
 
+        /// <summary>
+        /// Вывод поражения
+        /// </summary>
         public void Lose()
         {
             var loseState = new LoseState(this);
@@ -62,6 +73,9 @@ namespace _2048Game
             Animations.OpacityAnimation(loseState, 0, 1, 1.5);
         }
 
+        /// <summary>
+        /// Вывод победы
+        /// </summary>
         public void Win()
         {
             var winState = new WinState(this);
@@ -75,6 +89,10 @@ namespace _2048Game
             Animations.OpacityAnimation(winState, 0, 1, 1.5);
         }
 
+        /// <summary>
+        /// Удаление сообщения победы или поражения
+        /// </summary>
+        /// <param name="uIElement"></param>
         public void RemoveStateForm(UIElement uIElement)
         {
             mainGrid.Children.Remove(uIElement);
@@ -82,6 +100,11 @@ namespace _2048Game
             game.IsInterfaceLocked = false;
         }
 
+        /// <summary>
+        /// Рестарт игры при нажатии Enter
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void buttonRestart_Click(object sender, RoutedEventArgs e)
         {
             GameStart();

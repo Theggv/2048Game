@@ -1,14 +1,8 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Media.Effects;
 using System.Windows.Media.Animation;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Collections;
 
 namespace _2048Game
 {
@@ -22,13 +16,13 @@ namespace _2048Game
             Down = 1
         }
 
-        private Element curTarget;
-        private Point curDest;
+        private Element curTarget; // Текущий объект
+        private Point curDest; // Текущая точка перемещения
         private Game mainWindow;
         private Storyboard storyboard;
-        private bool isMultiplyValue;
+        private bool isMultiplyValue; // Увеличивать ли значение элемента
 
-        private int AnimationTimeMS = 200;
+        private int AnimationTimeMS = 200; // Время анимации
 
         public Animations(Game window)
         {

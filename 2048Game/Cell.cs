@@ -5,6 +5,9 @@ using System.Windows.Media;
 
 namespace _2048Game
 {
+    /// <summary>
+    /// Вспомогательный класс для хранения данных о клетке
+    /// </summary>
     public class Cell
     {
         public bool IsFree = true;
@@ -17,6 +20,9 @@ namespace _2048Game
         }
     }
 
+    /// <summary>
+    /// Класс для обозначения элемента
+    /// </summary>
     public partial class Element : Border
     {
         public TextBlock textBlock;
@@ -56,6 +62,9 @@ namespace _2048Game
             UpdateColor();
         }
 
+        /// <summary>
+        /// Обновление цвета элемента
+        /// </summary>
         public void UpdateColor()
         {
             if (Value <= 4)
