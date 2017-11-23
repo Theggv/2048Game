@@ -10,12 +10,12 @@ namespace _2048Game
     /// </summary>
     public class Cell
     {
-        public bool IsFree = true;
-        public Point startPoint;
+        public bool IsFree = true; // Свободна ли клетка
+        public Point coordinates; // координаты клетки
 
-        public Cell(Point start, bool isFree = true)
+        public Cell(Point coord, bool isFree = true)
         {
-            startPoint = start;
+            coordinates = coord;
             IsFree = isFree;
         }
     }
@@ -26,7 +26,7 @@ namespace _2048Game
     public partial class Element : Border
     {
         public TextBlock textBlock;
-        public int Value
+        public int Value // Значение элемента
         {
             get { return int.Parse(textBlock.Text); }
             set { textBlock.Text = value.ToString(); }

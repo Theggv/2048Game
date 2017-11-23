@@ -8,7 +8,7 @@ namespace _2048Game
 {
     public class Animations
     {
-        public enum Direction
+        public enum Direction // Направление
         {
             Left = 0,
             Up = 1,
@@ -18,8 +18,8 @@ namespace _2048Game
 
         private Element curTarget; // Текущий объект
         private Point curDest; // Текущая точка перемещения
-        private Game mainWindow;
-        private Storyboard storyboard;
+        private Game mainWindow; // Текущее окно
+        private Storyboard storyboard; // Массив анимаций
         private bool isMultiplyValue; // Увеличивать ли значение элемента
 
         private int AnimationTimeMS = 200; // Время анимации
