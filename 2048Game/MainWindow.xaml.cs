@@ -22,13 +22,19 @@ namespace _2048Game
     /// </summary>
     public partial class MainWindow : Window
     {
-        Game game;
+        private Game _Game;
+        private MainMenu _MainMenu;
 
         public MainWindow()
         {
             InitializeComponent();
 
-            GameStart();
+            _MainMenu = new MainMenu(this);
+
+            Grid.SetColumnSpan(_MainMenu, 3);
+            Grid.SetRowSpan(_MainMenu, 4);
+
+            mainGrid.Children.Add(_MainMenu);
         }
 
         /// <summary>
@@ -37,13 +43,13 @@ namespace _2048Game
         public void GameStart()
         {
             Game.gSize = Game.gChangedSize;
-            game = new Game(this);
+            _Game = new Game(this);
 
-            Grid.SetRow(game, 3);
-            Grid.SetColumnSpan(game, 3);
+            Grid.SetRow(_Game, 3);
+            Grid.SetColumnSpan(_Game, 3);
 
-            mainGrid.Children.Add(game);
-            game.UpdateLayout();
+            mainGrid.Children.Add(_Game);
+            _Game.UpdateLayout();
         }
 
         /// <summary>
@@ -53,8 +59,29 @@ namespace _2048Game
         /// <param name="e"></param>
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
-            if (game != null)
-                game.Game_KeyDown(sender, e);
+            if (_Game != null)
+            {
+                if (e.Key == Key.Escape)
+                {
+                    if (_Game.IsInterfaceLocked)
+                    {
+                        RemoveStateForm(_MainMenu);
+                    }
+                    else
+                    {
+                        _MainMenu = new MainMenu(this);
+
+                        Grid.SetColumnSpan(_MainMenu, 3);
+                        Grid.SetRowSpan(_MainMenu, 4);
+
+                        mainGrid.Children.Add(_MainMenu);
+
+                        _Game.IsInterfaceLocked = true;
+                    }
+                }
+                else
+                    _Game.Game_KeyDown(sender, e);
+            }
         }
 
         /// <summary>
@@ -97,7 +124,19 @@ namespace _2048Game
         {
             mainGrid.Children.Remove(uIElement);
             uIElement = null;
-            game.IsInterfaceLocked = false;
+
+            if(_Game != null)
+                _Game.IsInterfaceLocked = false;
+        }
+
+        public void CheckContinue(UIElement uIElement)
+        {
+            if (_Game != null)
+            {
+                mainGrid.Children.Remove(uIElement);
+                uIElement = null;
+                _Game.IsInterfaceLocked = false;
+            }
         }
 
         /// <summary>
