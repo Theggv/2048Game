@@ -31,7 +31,9 @@ namespace _2048Game
 
         private void buttonNewGame_Click(object sender, RoutedEventArgs e)
         {
-            mainWindow.RemoveStateForm(this);
+            //mainWindow.RemoveStateForm(this);
+
+            Animations.OpacityAnimation(this, 1, 0, 0.3, mainWindow);
             mainWindow.GameStart();
         }
 

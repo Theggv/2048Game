@@ -65,7 +65,8 @@ namespace _2048Game
                 {
                     if (_Game.IsInterfaceLocked)
                     {
-                        RemoveStateForm(_MainMenu);
+                        Animations.OpacityAnimation(_MainMenu, 1, 0, 0.3, this);
+                        //RemoveStateForm(_MainMenu);
                     }
                     else
                     {
@@ -75,6 +76,8 @@ namespace _2048Game
                         Grid.SetRowSpan(_MainMenu, 4);
 
                         mainGrid.Children.Add(_MainMenu);
+                        
+                        Animations.OpacityAnimation(_MainMenu, 0, 1, 0.3);
 
                         _Game.IsInterfaceLocked = true;
                     }
@@ -133,8 +136,7 @@ namespace _2048Game
         {
             if (_Game != null)
             {
-                mainGrid.Children.Remove(uIElement);
-                uIElement = null;
+                Animations.OpacityAnimation(uIElement, 1, 0, 0.3, this);
                 _Game.IsInterfaceLocked = false;
             }
         }

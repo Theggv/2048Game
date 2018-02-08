@@ -40,6 +40,14 @@ namespace _2048Game
             Target.BeginAnimation(UIElement.OpacityProperty, opacityAnim);
         }
 
+        public static void OpacityAnimation(UIElement Target, double From, double To, double Sec, MainWindow mainWindow)
+        {
+            var opacityAnim = SetDoubleAnimation(From, To, Sec * 1000);
+            opacityAnim.Completed += (s, e) => mainWindow.RemoveStateForm(Target);
+
+            Target.BeginAnimation(UIElement.OpacityProperty, opacityAnim);
+        }
+
         /// <summary>
         /// Анимация
         /// </summary>

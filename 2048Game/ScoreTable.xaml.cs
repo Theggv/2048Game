@@ -16,23 +16,13 @@ using System.Windows.Shapes;
 namespace _2048Game
 {
     /// <summary>
-    /// Логика взаимодействия для LoseState.xaml
+    /// Логика взаимодействия для ScoreTable.xaml
     /// </summary>
-    public partial class LoseState : UserControl
+    public partial class ScoreTable : UserControl
     {
-        MainWindow mainWindow;
-
-        public LoseState(MainWindow window)
+        public ScoreTable()
         {
             InitializeComponent();
-
-            mainWindow = window;
-        }
-
-        private void buttonRestart_Click(object sender, RoutedEventArgs e)
-        {
-            Animations.OpacityAnimation(this, 1, 0, 0.3, mainWindow);
-            mainWindow.GameStart();
         }
     }
 }
