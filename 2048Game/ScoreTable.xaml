@@ -23,12 +23,12 @@
             Foreground="#FFFFFAEE" 
             HorizontalAlignment="Center" VerticalAlignment="Center"
             TextAlignment="Center" Opacity="0.9" Grid.Column="1" Grid.Row="1"/>
-        <DataGrid Grid.Row="2" Grid.Column="1"
+        <DataGrid x:Name="Results" Grid.Row="2" Grid.Column="1" Loaded="DataGrid_Loaded"
                   AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserAddRows="False"
                   CanUserDeleteRows="False"> 
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Nickname" Binding="{Binding Path=Name}"/>
-                <DataGridTextColumn Header="Score" Binding="{Binding Path=Ball}"/>
+                <DataGridTextColumn Header="Nickname" Binding="{Binding Path=Name}" Width="3*"/>
+                <DataGridTextColumn Header="Score" Binding="{Binding Path=Ball}" Width="2*"/>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

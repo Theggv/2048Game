@@ -11,33 +11,47 @@ namespace _2048Game
     /// </summary>
     public partial class Game : UserControl
     {
-        enum GameState // Состояние игры
+        private ScoreBase _ScoreBase = ScoreBase.ScoresLoad();
+        private enum GameState // Состояние игры
         {
             Started = 0,
             Win,
             Lose
         }
 
-        GameState gameState = GameState.Started;
+        private GameState _GameState = GameState.Started;
+        private MainWindow mainWindow; // Главное окно
 
-        public static int gSize = 4; // Текущий размер поля
-        public static int gChangedSize = 4; // Текущий размер поля
+        private static int _FieldSize = 4;
+        private static int _FieldChangedSize = _FieldSize;
 
-        public Cell[,] gCell = new Cell[gSize, gSize]; // Игровое поле
-        public Element[,] gElement = new Element[gSize, gSize]; // Клетки
+        private const double CELL_SIZE = 55; // Размер клетки
+        private double _CellWidth; // Длина Клетки
+        private double _CellHeight; // Ширина Клетки
+        private double _CellOffset = 4; // Сдвиг клетки относительно левого верхнего угла
+        private static int _NumAnims = 0; // Количество проигрывающихся анимаций в данный момент
 
-        const double CellSize = 55; // Размер клетки
-        public double CellWidth; // Длина Клетки
-        public double CellHeight; // Ширина Клетки
-        public double CellOffset = 4; // Сдвиг клетки относительно левого верхнего угла
-        private static int numAnims = 0; // Количество проигрывающихся анимаций в данный момент
+        private static int _Score = 0; // Счёт
+        private static int _PreviousScore = 0; // Счёт, используемый для анимации
+        private static int _BestScore = 0; // Лучший счёт
 
-        public static int Score = 0; // Счёт
-        public static int PreviousScore = 0; // Счёт, используемый для анимации
-        public static int BestScore = 0; // Лучший счёт
+        /// <summary>
+        /// Текущий размер поля
+        /// </summary>
+        public static int G_Size { get { return _FieldSize; } set { _FieldSize = value; } }
+        /// <summary>
+        /// Текущий размер поля
+        /// </summary>
+        public static int G_ChangedSize { get { return _FieldChangedSize; } set { _FieldChangedSize = value; } }
 
-        MainWindow mainWindow; // Главное окно
+        public Cell[,] gCell = new Cell[_FieldSize, _FieldSize]; // Игровое поле
+        public Element[,] gElement = new Element[_FieldSize, _FieldSize]; // Клетки
+
         public bool IsInterfaceLocked = false; // Блокировка интерфейса
+
+        public double CellWidth { get { return _CellWidth; } }
+        public double CellHeight { get { return _CellHeight; } }
+        public static int Score { get { return _Score; } set { _Score = value; } }
 
         public Game(MainWindow window)
         {
@@ -45,13 +59,13 @@ namespace _2048Game
 
             // Задание размеров окна
             mainWindow = window;
-            mainWindow.Width = CellSize * gSize + 10;
-            mainWindow.Height = CellSize * gSize + 90;
+            mainWindow.Width = CELL_SIZE * _FieldSize + 10;
+            mainWindow.Height = CELL_SIZE * _FieldSize + 90;
             mainWindow.UpdateLayout();
 
             // Обнуление очков
-            Score = 0;
-            PreviousScore = 0;
+            _Score = 0;
+            _PreviousScore = 0;
 
             UpdateScore();
         }
@@ -64,25 +78,25 @@ namespace _2048Game
             mainWindow.UpdateLayout();
 
             // Задание размеров ячейки
-            CellWidth = fieldCanvas.ActualWidth / gSize;
-            CellHeight = fieldCanvas.ActualHeight / gSize;
+            _CellWidth = fieldCanvas.ActualWidth / _FieldSize;
+            _CellHeight = fieldCanvas.ActualHeight / _FieldSize;
 
             // Отрисовка визуального поля
-            for (int i = 0; i < gSize; i++)
+            for (int i = 0; i < _FieldSize; i++)
             {
-                for (int j = 0; j < gSize; j++)
+                for (int j = 0; j < _FieldSize; j++)
                 {
-                    gCell[i, j] = new Cell(new Point(CellWidth * j + CellOffset, CellHeight * i + CellOffset));
+                    gCell[i, j] = new Cell(new Point(_CellWidth * j + _CellOffset, _CellHeight * i + _CellOffset));
 
                     var border = new Border
                     {
                         Background = new SolidColorBrush(Color.FromRgb(180, 180, 180)),
                         CornerRadius = new CornerRadius(5),
-                        Width = CellWidth - 2 * CellOffset,
-                        Height = CellHeight - 2 * CellOffset
+                        Width = _CellWidth - 2 * _CellOffset,
+                        Height = _CellHeight - 2 * _CellOffset
                     };
-                    Canvas.SetLeft(border, CellWidth * j + CellOffset);
-                    Canvas.SetTop(border, CellHeight * i + CellOffset);
+                    Canvas.SetLeft(border, _CellWidth * j + _CellOffset);
+                    Canvas.SetTop(border, _CellHeight * i + _CellOffset);
 
                     fieldCanvas.Children.Add(border);
                     fieldCanvas.UpdateLayout();
@@ -119,14 +133,14 @@ namespace _2048Game
         {
             var obj = new Element
             {
-                Height = CellHeight - 2 * CellOffset,
-                Width = CellWidth - 2 * CellOffset,
+                Height = _CellHeight - 2 * _CellOffset,
+                Width = _CellWidth - 2 * _CellOffset,
                 row = x,
                 column = y
             };
 
-            Canvas.SetLeft(obj, CellWidth * y + CellOffset);
-            Canvas.SetTop(obj, CellHeight * x + CellOffset);
+            Canvas.SetLeft(obj, _CellWidth * y + _CellOffset);
+            Canvas.SetTop(obj, _CellHeight * x + _CellOffset);
 
             fieldCanvas.Children.Add(obj);
             fieldCanvas.UpdateLayout();
@@ -143,7 +157,7 @@ namespace _2048Game
         /// <param name="e"></param>
         public void Game_KeyDown(object sender, KeyEventArgs e)
         {
-            if (numAnims != 0 || IsInterfaceLocked)
+            if (_NumAnims != 0 || IsInterfaceLocked)
                 return;
 
             switch (e.Key)
@@ -152,21 +166,21 @@ namespace _2048Game
                     GameRestart();
                     break;
                 case Key.Left:
-                    for (int i = 0; i < gSize; i++)  // Элемент Столбца
+                    for (int i = 0; i < _FieldSize; i++)  // Элемент Столбца
                     {
-                        int[] arrValues = new int[gSize];
-                        for (int j = 0; j < gSize; j++)
+                        int[] arrValues = new int[_FieldSize];
+                        for (int j = 0; j < _FieldSize; j++)
                         {
                             if (gCell[i, j].IsFree)
                                 arrValues[j] = 0;
                             else
                                 arrValues[j] = gElement[i, j].Value;
                         }
-                        for (int k = 0; k < gSize; k++)
+                        for (int k = 0; k < _FieldSize; k++)
                         {
                             #region Поиск Первого ненулевого элемента
                             int FromCell = -1; // Первый ненулевой элемент
-                            for (int j = k; j < gSize; j++)
+                            for (int j = k; j < _FieldSize; j++)
                             {
                                 if (!gCell[i, j].IsFree)
                                 {
@@ -193,7 +207,7 @@ namespace _2048Game
 
                             #region Поиск Стакующегося элемента
                             int MergeCell = FromCell; // Второй элемент со значением FromCell
-                            for (int j = FromCell + 1; j < gSize; j++)
+                            for (int j = FromCell + 1; j < _FieldSize; j++)
                             {
                                 if (!gCell[i, j].IsFree)
                                 {
@@ -245,21 +259,21 @@ namespace _2048Game
                     }
                     break;
                 case Key.Up:
-                    for (int j = 0; j < gSize; j++)  // Элемент Строки
+                    for (int j = 0; j < _FieldSize; j++)  // Элемент Строки
                     {
-                        int[] arrValues = new int[gSize];
-                        for (int i = 0; i < gSize; i++)
+                        int[] arrValues = new int[_FieldSize];
+                        for (int i = 0; i < _FieldSize; i++)
                         {
                             if (gCell[i, j].IsFree)
                                 arrValues[i] = 0;
                             else
                                 arrValues[i] = gElement[i, j].Value;
                         }
-                        for (int k = 0; k < gSize; k++)
+                        for (int k = 0; k < _FieldSize; k++)
                         {
                             #region Поиск Первого ненулевого элемента
                             int FromCell = -1; // Первый ненулевой элемент
-                            for (int i = k; i < gSize; i++)
+                            for (int i = k; i < _FieldSize; i++)
                             {
                                 if (!gCell[i, j].IsFree)
                                 {
@@ -286,7 +300,7 @@ namespace _2048Game
 
                             #region Поиск Стакующегося элемента
                             int MergeCell = FromCell; // Второй элемент со значением FromCell
-                            for (int i = FromCell + 1; i < gSize; i++)
+                            for (int i = FromCell + 1; i < _FieldSize; i++)
                             {
                                 if (!gCell[i, j].IsFree)
                                 {
@@ -338,17 +352,17 @@ namespace _2048Game
                     }
                     break;
                 case Key.Right:
-                    for (int i = 0; i < gSize; i++)  // Элемент Столбца
+                    for (int i = 0; i < _FieldSize; i++)  // Элемент Столбца
                     {
-                        int[] arrValues = new int[gSize];
-                        for (int j = 0; j < gSize; j++)
+                        int[] arrValues = new int[_FieldSize];
+                        for (int j = 0; j < _FieldSize; j++)
                         {
                             if (gCell[i, j].IsFree)
                                 arrValues[j] = 0;
                             else
                                 arrValues[j] = gElement[i, j].Value;
                         }
-                        for (int k = gSize - 1; k >= 0; k--)
+                        for (int k = _FieldSize - 1; k >= 0; k--)
                         {
                             #region Поиск Первого ненулевого элемента
                             int FromCell = -1; // Первый ненулевой элемент
@@ -368,7 +382,7 @@ namespace _2048Game
 
                             #region Поиск Первого нулевого элемента
                             int FreeCell = FromCell; // Первая свободная клетка
-                            for (int j = FromCell + 1; j < gSize; j++)
+                            for (int j = FromCell + 1; j < _FieldSize; j++)
                             {
                                 if (gCell[i, j].IsFree)
                                     FreeCell++;
@@ -431,10 +445,10 @@ namespace _2048Game
                     }
                     break;
                 case Key.Down:
-                    for (int j = 0; j < gSize; j++)  // Элемент Строки
+                    for (int j = 0; j < _FieldSize; j++)  // Элемент Строки
                     {
-                        int[] arrValues = new int[gSize];
-                        for (int i = 0; i < gSize; i++)
+                        int[] arrValues = new int[_FieldSize];
+                        for (int i = 0; i < _FieldSize; i++)
                         {
                             if (gCell[i, j].IsFree)
                                 arrValues[i] = 0;
@@ -442,7 +456,7 @@ namespace _2048Game
                                 arrValues[i] = gElement[i, j].Value;
                         }
 
-                        for (int k = gSize - 1; k >= 0; k--)
+                        for (int k = _FieldSize - 1; k >= 0; k--)
                         {
                             #region Поиск Первого ненулевого элемента
                             int FromCell = -1; // Первый ненулевой элемент
@@ -462,7 +476,7 @@ namespace _2048Game
 
                             #region Поиск Первого нулевого элемента
                             int FreeCell = FromCell; // Первая свободная клетка
-                            for (int i = FromCell + 1; i < gSize; i++)
+                            for (int i = FromCell + 1; i < _FieldSize; i++)
                             {
                                 if (gCell[i, j].IsFree)
                                     FreeCell++;
@@ -560,12 +574,12 @@ namespace _2048Game
         /// <param name="IsMultiply">Увеличивать ли кол-во очков</param>
         public void MoveCell(ref Element From, Point To, Animations.Direction d, bool IsMultiply = false)
         {
-            numAnims++;
+            _NumAnims++;
             var anim = new Animations(this);
             anim.SetMoveAnimation(From, To, d, IsMultiply);
 
             gCell[From.row, From.column].IsFree = true;
-            gCell[(int)(To.Y / CellHeight), (int)(To.X / CellWidth)].IsFree = false;
+            gCell[(int)(To.Y / _CellHeight), (int)(To.X / _CellWidth)].IsFree = false;
         }
 
 
@@ -596,9 +610,9 @@ namespace _2048Game
             gElement[xTo, yTo].column = yTo;
             fieldCanvas.UpdateLayout();
 
-            numAnims--;
+            _NumAnims--;
             // Если все анимации закончились, то спавним новый элемент в случайной позиции
-            if (numAnims == 0)
+            if (_NumAnims == 0)
             {
                 SpawnRandomElement();
                 UpdateScore();
@@ -624,8 +638,8 @@ namespace _2048Game
             Random rnd = new Random();
             while (true)
             {
-                int x = rnd.Next(0, gSize);
-                int y = rnd.Next(0, gSize);
+                int x = rnd.Next(0, _FieldSize);
+                int y = rnd.Next(0, _FieldSize);
 
                 if (gCell[y, x].IsFree)
                 {
@@ -658,18 +672,18 @@ namespace _2048Game
             {
                 bool IsLose = true;
                 // Проверка строк на наличие ходов
-                for (int i = 0; i < gSize; i++)
+                for (int i = 0; i < _FieldSize; i++)
                 {
-                    for (int j = 0; j < gSize - 1; j++)
+                    for (int j = 0; j < _FieldSize - 1; j++)
                     {
                         if (gElement[i, j].Value == gElement[i, j + 1].Value)
                             IsLose = false;
                     }
                 }
                 // Проверка столбцов на наличие ходов
-                for (int i = 0; i < gSize - 1; i++)
+                for (int i = 0; i < _FieldSize - 1; i++)
                 {
-                    for (int j = 0; j < gSize; j++)
+                    for (int j = 0; j < _FieldSize; j++)
                     {
                         if (gElement[i, j].Value == gElement[i + 1, j].Value)
                             IsLose = false;
@@ -679,7 +693,8 @@ namespace _2048Game
                 if (IsLose)
                 {
                     IsInterfaceLocked = true;
-                    gameState = GameState.Lose;
+                    _ScoreBase.AddScore(new UserInfo("player", _Score));
+                    _GameState = GameState.Lose;
 
                     mainWindow.Lose();
                     return;
@@ -687,19 +702,19 @@ namespace _2048Game
             }
 
             // Если игра ещё не выйграна, проверка на победу
-            if (gameState != GameState.Win)
+            if (_GameState != GameState.Win)
             {
                 // Проверка на наличие клетки со значением 2048
                 foreach (var element in gElement)
                 {
                     if (element != null && element.Value == 2048)
                     {
-                        gameState = GameState.Win;
+                        _GameState = GameState.Win;
                         break;
                     }
                 }
                 // Если такая клетка есть, вывод победы
-                if (gameState == GameState.Win)
+                if (_GameState == GameState.Win)
                 {
                     IsInterfaceLocked = true;
                     mainWindow.Win();
@@ -713,24 +728,24 @@ namespace _2048Game
         public void UpdateScore()
         {
             // Обновление анимации текущего результата
-            if(Score > PreviousScore)
+            if(_Score > _PreviousScore)
             {
-                mainWindow.curScore.Text = "+" + (Score - PreviousScore).ToString();
+                mainWindow.curScore.Text = "+" + (_Score - _PreviousScore).ToString();
                 Animations.SetScoreAnimation(mainWindow.curScore);
             }
-            PreviousScore = Score;
+            _PreviousScore = _Score;
 
             // Если Текущий результат лучше предыдущего
-            if (Score > BestScore)
+            if (_Score > _BestScore)
             {
-                mainWindow.bestScore.Text = "+" + (Score - BestScore).ToString();
+                mainWindow.bestScore.Text = "+" + (_Score - _BestScore).ToString();
                 Animations.SetScoreAnimation(mainWindow.bestScore);
 
-                BestScore = Score;
+                _BestScore = _Score;
             }
 
-            mainWindow.blockScore.Text = Score.ToString();
-            mainWindow.blockBestScore.Text = BestScore.ToString();
+            mainWindow.blockScore.Text = _Score.ToString();
+            mainWindow.blockBestScore.Text = _BestScore.ToString();
         }
     }
 }

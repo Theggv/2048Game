@@ -76,6 +76,7 @@
     <Compile Include="MainMenu.xaml.cs">
       <DependentUpon>MainMenu.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ScoreBase.cs" />
     <Compile Include="ScoreTable.xaml.cs">
       <DependentUpon>ScoreTable.xaml</DependentUpon>
     </Compile>

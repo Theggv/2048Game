@@ -42,7 +42,7 @@ namespace _2048Game
         /// </summary>
         public void GameStart()
         {
-            Game.gSize = Game.gChangedSize;
+            Game.G_Size = Game.G_ChangedSize;
             _Game = new Game(this);
 
             Grid.SetRow(_Game, 3);
@@ -153,7 +153,7 @@ namespace _2048Game
 
         private void slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            Game.gChangedSize = (int)slider.Value;
+            Game.G_ChangedSize = (int)slider.Value;
         }
     }
 }
