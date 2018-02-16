@@ -20,19 +20,26 @@ namespace _2048Game
     /// </summary>
     public partial class LoseState : UserControl
     {
-        MainWindow mainWindow;
+        private MainWindow _MainWindow;
 
         public LoseState(MainWindow window)
         {
             InitializeComponent();
 
-            mainWindow = window;
+            _MainWindow = window;
         }
 
         private void buttonRestart_Click(object sender, RoutedEventArgs e)
         {
-            Animations.OpacityAnimation(this, 1, 0, 0.3, mainWindow);
-            mainWindow.GameStart();
+            Animations.OpacityAnimation(this, 1, 0, 0.3, _MainWindow);
+            _MainWindow.GameStart();
+        }
+
+        private void BackMenu_Click(object sender, RoutedEventArgs e)
+        {
+            Animations.OpacityAnimation(this, 1, 0, 0.3, _MainWindow);
+
+            _MainWindow.ShowMainMenu();
         }
     }
 }

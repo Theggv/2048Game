@@ -32,12 +32,13 @@ namespace _2048Game
         private void buttonContinue_Click(object sender, RoutedEventArgs e)
         {
             Animations.OpacityAnimation(this, 1, 0, 0.3, mainWindow);
-            //mainWindow.RemoveStateForm(this);
         }
 
         private void buttonRestart_Click(object sender, RoutedEventArgs e)
         {
             Animations.OpacityAnimation(this, 1, 0, 0.3, mainWindow);
+
+            MainWindow.ScoreBase.AddScore(new UserInfo("player", Game.Score));
             mainWindow.GameStart();
         }
     }

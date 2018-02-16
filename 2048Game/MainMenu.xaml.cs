@@ -1,17 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace _2048Game
 {
@@ -20,31 +9,80 @@ namespace _2048Game
     /// </summary>
     public partial class MainMenu : UserControl
     {
-        MainWindow mainWindow;
+        private MainWindow _MainWindow;
+        private ScoreTable _ScoreTable;
 
         public MainMenu(MainWindow window)
         {
             InitializeComponent();
 
-            mainWindow = window;
+            _MainWindow = window;
         }
 
         private void buttonNewGame_Click(object sender, RoutedEventArgs e)
         {
-            //mainWindow.RemoveStateForm(this);
+            if (Game.Score > 0)
+            {
+                MainWindow.ScoreBase.AddScore(new UserInfo("player", Game.Score));
+            }
 
-            Animations.OpacityAnimation(this, 1, 0, 0.3, mainWindow);
-            mainWindow.GameStart();
+            Animations.OpacityAnimation(this, 1, 0, 0.3, _MainWindow);
+            _MainWindow.GameStart();
         }
 
         private void buttonContinue_Click(object sender, RoutedEventArgs e)
         {
-            mainWindow.CheckContinue(this);
+            _MainWindow.CheckContinue(this);
         }
 
         private void HelpButton_Click(object sender, RoutedEventArgs e)
         {
+            MessageBox.Show("In developing..");
+        }
 
+        private void BestScores_Click(object sender, RoutedEventArgs e)
+        {
+            if (MainWindow.ScoreBase.IsHasScores())
+            {
+                _ScoreTable = new ScoreTable(this);
+
+                Grid.SetColumnSpan(_ScoreTable, 3);
+                Grid.SetRowSpan(_ScoreTable, 6);
+
+                MenuGrid.Children.Add(_ScoreTable);
+
+                Animations.OpacityAnimation(_ScoreTable, 0, 1, 0.3);
+            }
+        }
+
+        public void RemoveStateForm(UIElement uIElement)
+        {
+            MenuGrid.Children.Remove(uIElement);
+            uIElement = null;
+        }
+
+        private void buttonContinue_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (Game.GetGameState == Game.GameState.Not_Started || Game.GetGameState == Game.GameState.Lose)
+            {
+                buttonContinue.Foreground = new SolidColorBrush(Color.FromArgb(255, 128, 128, 128));
+            }
+            else
+            {
+                buttonContinue.Foreground = new SolidColorBrush(Color.FromArgb(255, 255, 250, 238));
+            }
+        }
+
+        private void BestScores_Loaded(object sender, System.EventArgs e)
+        {
+            if (MainWindow.ScoreBase.IsHasScores())
+            {
+                BestScores.Foreground = new SolidColorBrush(Color.FromArgb(255, 255, 250, 238));
+            }
+            else
+            {
+                BestScores.Foreground = new SolidColorBrush(Color.FromArgb(255, 128, 128, 128));
+            }
         }
     }
 }

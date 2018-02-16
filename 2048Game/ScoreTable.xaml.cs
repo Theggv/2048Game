@@ -8,16 +8,23 @@ namespace _2048Game
     /// </summary>
     public partial class ScoreTable : UserControl
     {
-        private ScoreBase _ScoreBase;
-        public ScoreTable(ScoreBase scoreBase)
+        private MainMenu _MainMenu;
+
+        public ScoreTable(MainMenu mainMenu)
         {
-            _ScoreBase = scoreBase;
             InitializeComponent();
+
+            _MainMenu = mainMenu;
         }
 
         private void DataGrid_Loaded(object sender, RoutedEventArgs e)
         {
-            Results.ItemsSource = _ScoreBase.Scores;
+            Results.ItemsSource = MainWindow.ScoreBase.Scores;
+        }
+
+        private void ButtonBack_Click(object sender, RoutedEventArgs e)
+        {
+            Animations.OpacityAnimation(this, 1, 0, 0.3, _MainMenu);
         }
     }
 }

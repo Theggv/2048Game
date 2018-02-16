@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:_2048Game"
         mc:Ignorable="d"
-        Title="2048" Height="320" Width="240" ResizeMode="CanMinimize" Padding="0" WindowStyle="ThreeDBorderWindow" KeyDown="Window_KeyDown">
+        Title="2048" Height="320" Width="240" ResizeMode="CanMinimize" Padding="0" WindowStyle="ThreeDBorderWindow" KeyDown="Window_KeyDown" Closing="Window_Closing">
     <Grid x:Name="mainGrid" Background="#FFD3C9C9">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="4*"/>

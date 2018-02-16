@@ -1,19 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Media.Effects;
-using System.Windows.Media.Animation;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace _2048Game
 {
@@ -24,13 +14,25 @@ namespace _2048Game
     {
         private Game _Game;
         private MainMenu _MainMenu;
+        private static ScoreBase _ScoreBase = new ScoreBase();
+
+        public static ScoreBase ScoreBase { get { return _ScoreBase; } set { _ScoreBase = value; } }
 
         public MainWindow()
         {
+            try
+            {
+                _ScoreBase = ScoreBase.ScoresLoad();
+            }
+            catch
+            {
+                _ScoreBase = new ScoreBase();
+            }
+
             InitializeComponent();
 
             _MainMenu = new MainMenu(this);
-
+            
             Grid.SetColumnSpan(_MainMenu, 3);
             Grid.SetRowSpan(_MainMenu, 4);
 
@@ -66,25 +68,29 @@ namespace _2048Game
                     if (_Game.IsInterfaceLocked)
                     {
                         Animations.OpacityAnimation(_MainMenu, 1, 0, 0.3, this);
-                        //RemoveStateForm(_MainMenu);
                     }
                     else
                     {
-                        _MainMenu = new MainMenu(this);
-
-                        Grid.SetColumnSpan(_MainMenu, 3);
-                        Grid.SetRowSpan(_MainMenu, 4);
-
-                        mainGrid.Children.Add(_MainMenu);
-                        
-                        Animations.OpacityAnimation(_MainMenu, 0, 1, 0.3);
-
-                        _Game.IsInterfaceLocked = true;
+                        ShowMainMenu();
                     }
                 }
                 else
                     _Game.Game_KeyDown(sender, e);
             }
+        }
+
+        public void ShowMainMenu()
+        {
+            _MainMenu = new MainMenu(this);
+
+            Grid.SetColumnSpan(_MainMenu, 3);
+            Grid.SetRowSpan(_MainMenu, 4);
+
+            mainGrid.Children.Add(_MainMenu);
+
+            Animations.OpacityAnimation(_MainMenu, 0, 1, 0.3);
+
+            _Game.IsInterfaceLocked = true;
         }
 
         /// <summary>
@@ -136,8 +142,11 @@ namespace _2048Game
         {
             if (_Game != null)
             {
-                Animations.OpacityAnimation(uIElement, 1, 0, 0.3, this);
-                _Game.IsInterfaceLocked = false;
+                if (Game.GetGameState == Game.GameState.Started || Game.GetGameState == Game.GameState.Win)
+                {
+                    Animations.OpacityAnimation(uIElement, 1, 0, 0.3, this);
+                    _Game.IsInterfaceLocked = false;
+                }
             }
         }
 
@@ -151,9 +160,46 @@ namespace _2048Game
             GameStart();
         }
 
+        /// <summary>
+        /// Изменение размера поля
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             Game.G_ChangedSize = (int)slider.Value;
+        }
+
+        /// <summary>
+        /// Сохранение результатов
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            FileStream file;
+            try
+            {
+                file = new FileStream("scores.bin", FileMode.Create);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                throw new Exception();
+            }
+
+            BinaryFormatter binaryFormatter = new BinaryFormatter();
+            try
+            {
+                binaryFormatter.Serialize(file, _ScoreBase);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                throw new Exception();
+            }
+
+            file.Close();
         }
     }
 }

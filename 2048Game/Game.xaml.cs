@@ -11,15 +11,15 @@ namespace _2048Game
     /// </summary>
     public partial class Game : UserControl
     {
-        private ScoreBase _ScoreBase = ScoreBase.ScoresLoad();
-        private enum GameState // Состояние игры
+        public enum GameState // Состояние игры
         {
-            Started = 0,
+            Not_Started = 0,
+            Started,
             Win,
             Lose
         }
 
-        private GameState _GameState = GameState.Started;
+        private static GameState _GameState = GameState.Not_Started;
         private MainWindow mainWindow; // Главное окно
 
         private static int _FieldSize = 4;
@@ -33,7 +33,7 @@ namespace _2048Game
 
         private static int _Score = 0; // Счёт
         private static int _PreviousScore = 0; // Счёт, используемый для анимации
-        private static int _BestScore = 0; // Лучший счёт
+        private static int _BestScore = MainWindow.ScoreBase.GetBestScore(); // Лучший счёт
 
         /// <summary>
         /// Текущий размер поля
@@ -52,6 +52,7 @@ namespace _2048Game
         public double CellWidth { get { return _CellWidth; } }
         public double CellHeight { get { return _CellHeight; } }
         public static int Score { get { return _Score; } set { _Score = value; } }
+        public static GameState GetGameState { get { return _GameState; } }
 
         public Game(MainWindow window)
         {
@@ -73,6 +74,8 @@ namespace _2048Game
         // Инициализация поля
         private void FieldCanvas_Loaded(object sender, RoutedEventArgs e)
         {
+            _GameState = GameState.Started;
+
             Canvas.SetLeft(mainWindow.curScore, mainWindow.scoreCanvas.ActualWidth * 0.3);
             Canvas.SetLeft(mainWindow.bestScore, mainWindow.scoreCanvas.ActualWidth * 0.8);
             mainWindow.UpdateLayout();
@@ -111,6 +114,11 @@ namespace _2048Game
         // Рестарт поля
         private void GameRestart()
         {
+            if (Game.Score > 0)
+            {
+                MainWindow.ScoreBase.AddScore(new UserInfo("player", Game.Score));
+            }
+
             fieldCanvas = new Canvas
             {
                 Background = new SolidColorBrush(Color.FromRgb(145, 145, 145))
@@ -693,7 +701,7 @@ namespace _2048Game
                 if (IsLose)
                 {
                     IsInterfaceLocked = true;
-                    _ScoreBase.AddScore(new UserInfo("player", _Score));
+                    MainWindow.ScoreBase.AddScore(new UserInfo("player", _Score));
                     _GameState = GameState.Lose;
 
                     mainWindow.Lose();
