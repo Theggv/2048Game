@@ -8,46 +8,41 @@ namespace _2048Game
     /// <summary>
     /// Вспомогательный класс для хранения данных о клетке
     /// </summary>
-    public class Cell
+    public class LogicalCell
     {
-        public bool IsFree = true; // Свободна ли клетка
-        public Point coordinates; // координаты клетки
+        private bool _IsFree = true; // Свободна ли клетка
+        private Point _Coordinates; // координаты клетки
 
-        public Cell(Point coord, bool isFree = true)
+        public bool IsCellFree { get { return _IsFree; } set { _IsFree = value; } }
+
+        public Point Coordinates { get { return _Coordinates; } set { _Coordinates = value; } }
+
+        public LogicalCell(Point coord, bool isFree = true)
         {
-            coordinates = coord;
-            IsFree = isFree;
+            _Coordinates = coord;
+            _IsFree = isFree;
         }
     }
 
     /// <summary>
-    /// Класс для обозначения элемента
+    /// Класс для отрисовки плитки
     /// </summary>
-    public partial class Element : Border
+    public partial class PhysicalCell : Border
     {
-        public TextBlock textBlock;
-        public int Value // Значение элемента
-        {
-            get { return int.Parse(textBlock.Text); }
-            set { textBlock.Text = value.ToString(); }
-        }
+        private int _Row;
+        private int _Column;
+        private TextBlock _TextBlock;
 
-        /// <summary>
-        /// Текущий столбец
-        /// </summary>
-        public int row;
+        public int Row { get { return _Row; } set { _Row = value; } }
+        public int Column { get { return _Column; } set { _Column = value; } }
+        public int Value { get { return int.Parse(_TextBlock.Text); } set { _TextBlock.Text = value.ToString(); } }
 
-        /// <summary>
-        /// Текущая строка
-        /// </summary>
-        public int column;
-
-        public Element()
+        public PhysicalCell()
         {
             BorderBrush = new SolidColorBrush(Color.FromRgb(50, 50, 50));
             CornerRadius = new CornerRadius(5);
 
-            textBlock = new TextBlock
+            _TextBlock = new TextBlock
             {
                 TextAlignment = TextAlignment.Center,
                 TextWrapping = TextWrapping.NoWrap,
@@ -56,24 +51,24 @@ namespace _2048Game
                 FontFamily = new FontFamily("Verdana"),
                 VerticalAlignment = VerticalAlignment.Center,
             };
-            Child = textBlock;
+            Child = _TextBlock;
 
             Value = new Random().Next(0, 11) != 10 ? 2 : 4;
             UpdateColor();
         }
 
         /// <summary>
-        /// Обновление цвета элемента
+        /// Обновление цвета плитки
         /// </summary>
         public void UpdateColor()
         {
             if (Value <= 4)
-                textBlock.Foreground = new SolidColorBrush(Color.FromRgb(25, 25, 25));
+                _TextBlock.Foreground = new SolidColorBrush(Color.FromRgb(25, 25, 25));
             else
             {
-                textBlock.Foreground = Brushes.White;
+                _TextBlock.Foreground = Brushes.White;
                 if (Value >= 1024)
-                    textBlock.FontSize = 16;
+                    _TextBlock.FontSize = 16;
             }
 
             if (Value == 2)
