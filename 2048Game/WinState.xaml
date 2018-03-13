@@ -18,13 +18,13 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <TextBlock x:Name="textBlock" Text="You win!"
+        <TextBlock x:Name="textBlock" Text="Вы победили!"
                    FontSize="20" FontFamily="Verdana" FontWeight="Bold"
                    Foreground="#FFFFFAEE" Grid.ColumnSpan="3" 
                    HorizontalAlignment="Center" VerticalAlignment="Center"
                    TextAlignment="Center" Opacity="0.9"/>
         <Border BorderBrush="Black" BorderThickness="0" Grid.Row="2" Grid.Column="1" Opacity="1" CornerRadius="10" Background="#FF969696" Grid.RowSpan="1" Margin="2">
-            <Button Focusable="False" x:Name="buttonRestart" Content="Try again" FontSize="14" Foreground="#FFFFFAEE" Click="buttonRestart_Click" Background="{x:Null}" BorderBrush="{x:Null}" Padding="1" BorderThickness="0" FontWeight="Bold" IsDefault="True" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.9">
+            <Button Focusable="False" x:Name="buttonRestart" Content="Заново" FontSize="14" Foreground="#FFFFFAEE" Click="buttonRestart_Click" Background="{x:Null}" BorderBrush="{x:Null}" Padding="1" BorderThickness="0" FontWeight="Bold" IsDefault="True" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.9">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
                         <ContentPresenter Content="{TemplateBinding Content}"/>
@@ -33,7 +33,7 @@
             </Button>
         </Border>
         <Border BorderBrush="Black" BorderThickness="0" Grid.Row="1" Grid.Column="1" Opacity="1" CornerRadius="10" Background="#FF969696" Grid.RowSpan="1" Margin="2">
-            <Button Focusable="False" x:Name="buttonContinue" Content="Continue" FontSize="14" Foreground="#FFFFFAEE" Click="buttonContinue_Click" Background="{x:Null}" BorderBrush="{x:Null}" Padding="1" BorderThickness="0" FontWeight="Bold" IsDefault="True" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.9">
+            <Button Focusable="False" x:Name="buttonContinue" Content="Продолжить" FontSize="14" Foreground="#FFFFFAEE" Click="buttonContinue_Click" Background="{x:Null}" BorderBrush="{x:Null}" Padding="1" BorderThickness="0" FontWeight="Bold" IsDefault="True" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.9">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
                         <ContentPresenter Content="{TemplateBinding Content}"/>

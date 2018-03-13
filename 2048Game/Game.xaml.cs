@@ -25,7 +25,7 @@ namespace _2048Game
         private static int _FieldSize = 4;
         private static int _FieldChangedSize = _FieldSize;
 
-        private const double CELL_SIZE = 55; // Размер клетки
+        private const double CELL_SIZE = 60; // Размер клетки
         private double _CellWidth; // Длина Клетки
         private double _CellHeight; // Ширина Клетки
         private double _CellOffset = 4; // Сдвиг клетки относительно левого верхнего угла

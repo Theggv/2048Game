@@ -18,7 +18,7 @@
             <ColumnDefinition Width="6*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <TextBlock x:Name="textBlock" Text="Best results"
+        <TextBlock x:Name="textBlock" Text="Лучшие результаты"
             FontSize="20" FontFamily="Verdana" FontWeight="Bold"
             Foreground="#FFFFFAEE" 
             HorizontalAlignment="Center" VerticalAlignment="Center"
@@ -27,12 +27,12 @@
                   AutoGenerateColumns="False" CanUserResizeColumns="False" CanUserAddRows="False"
                   CanUserDeleteRows="False" Focusable="False">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Nickname" Binding="{Binding Path=UserName}" Width="3*" CanUserSort="False" CanUserResize="False" Selector.IsSelected="False"/>
-                <DataGridTextColumn Header="Score" Binding="{Binding Path=Score}" Width="2*" IsReadOnly="True" CanUserSort="False" CanUserResize="False" Selector.IsSelected="False"/>
+                <DataGridTextColumn Header="Имя" Binding="{Binding Path=UserName}" Width="3*" CanUserSort="False" CanUserResize="False" Selector.IsSelected="False"/>
+                <DataGridTextColumn Header="Счёт" Binding="{Binding Path=Score}" Width="2*" IsReadOnly="True" CanUserSort="False" CanUserResize="False" Selector.IsSelected="False"/>
             </DataGrid.Columns>
         </DataGrid>
         <Border BorderBrush="Black" BorderThickness="0" Grid.Row="2" Grid.Column="1" Opacity="1" CornerRadius="10" Background="#FF969696" Grid.RowSpan="1" Margin="2">
-            <Button Focusable="False" x:Name="ButtonBack" Content="Back" FontSize="14" Foreground="#FFFFFAEE" Click="ButtonBack_Click"  Background="{x:Null}" BorderBrush="{x:Null}" Padding="1" BorderThickness="0" FontWeight="Bold" IsDefault="True" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.9">
+            <Button Focusable="False" x:Name="ButtonBack" Content="Назад" FontSize="14" Foreground="#FFFFFAEE" Click="ButtonBack_Click"  Background="{x:Null}" BorderBrush="{x:Null}" Padding="1" BorderThickness="0" FontWeight="Bold" IsDefault="True" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.9">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
                         <ContentPresenter Content="{TemplateBinding Content}"/>
