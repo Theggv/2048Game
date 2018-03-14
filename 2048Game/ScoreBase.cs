@@ -11,11 +11,7 @@ namespace _2048Game
         private List<UserInfo> _ScoreBase = new List<UserInfo>();
         private const string _FileName = "scores.bin";
 
-        public List<UserInfo> Scores
-        {
-            get { return _ScoreBase; }
-            set { _ScoreBase = value; }
-        }
+        public List<UserInfo> Scores { get { return _ScoreBase; } set { _ScoreBase = value; } }
 
         public void AddScore(UserInfo userInfo)
         {
@@ -72,6 +68,7 @@ namespace _2048Game
             {
                 throw new Exception();
             }
+
             BinaryFormatter binaryFormatter = new BinaryFormatter();
 
             ScoreBase output;
@@ -123,17 +120,9 @@ namespace _2048Game
         private string _UserName;
         private int _Score;
 
-        public string UserName
-        {
-            get { return _UserName; }
-            set { _UserName = value; }
-        }
+        public string UserName { get { return _UserName; } set { _UserName = value; } }
 
-        public int Score
-        {
-            get { return _Score; }
-            set { _Score = value; }
-        }
+        public int Score { get { return _Score; } set { _Score = value; } }
 
         public UserInfo(string username, int score)
         {

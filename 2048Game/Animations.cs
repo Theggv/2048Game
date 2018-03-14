@@ -16,7 +16,7 @@ namespace _2048Game
             Down = 1
         }
 
-        private Element curTarget; // Текущий объект
+        private PhysicalCell curTarget; // Текущий объект
         private Point curDest; // Текущая точка перемещения
         private Game mainWindow; // Текущее окно
         private Storyboard storyboard; // Массив анимаций
@@ -82,7 +82,7 @@ namespace _2048Game
         /// <param name="Destination">Точка назначения</param>
         /// <param name="direction">Направление</param>
         /// <param name="isMult">Удваивать значение клетки</param>
-        public void SetMoveAnimation(Element Target, Point Destination, Direction direction, bool isMult = false)
+        public void SetMoveAnimation(PhysicalCell Target, Point Destination, Direction direction, bool isMult = false)
         {
             curTarget = Target;
             curDest = Destination;
@@ -119,7 +119,7 @@ namespace _2048Game
         /// Анимация появления клетки
         /// </summary>
         /// <param name="Target">Объект</param>
-        public void SetSpawnAnimation(Element Target)
+        public void SetSpawnAnimation(PhysicalCell Target)
         {
             var scaleTransform = new ScaleTransform();
             Target.LayoutTransform = scaleTransform;
@@ -144,7 +144,7 @@ namespace _2048Game
         /// Анимация объединения клеток
         /// </summary>
         /// <param name="Target">Объект</param>
-        public void SetMergeAnimation(Element Target)
+        public void SetMergeAnimation(PhysicalCell Target)
         {
             var scaleTransform = new ScaleTransform();
             Target.LayoutTransform = scaleTransform;
@@ -189,7 +189,7 @@ namespace _2048Game
 
                 SetMergeAnimation(curTarget);
             }
-            mainWindow.UpdateInfo(curTarget.row, curTarget.column,
+            mainWindow.UpdateInfo(curTarget.Row, curTarget.Column,
                 (int)(curDest.Y / mainWindow.CellHeight), (int)(curDest.X / mainWindow.CellWidth));
         }
     }
