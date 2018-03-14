@@ -112,7 +112,8 @@ namespace _2048Game
         }
 
         // Рестарт поля
-        private void GameRestart()
+        /*
+        public void GameRestart()
         {
             if (Game.Score > 0)
             {
@@ -130,6 +131,7 @@ namespace _2048Game
             fieldCanvas.Loaded += FieldCanvas_Loaded;
             fieldCanvas.UpdateLayout();
         }
+        */
     
         /// <summary>
         /// Спавн элемента по заданным координатам
@@ -171,7 +173,7 @@ namespace _2048Game
             switch (e.Key)
             {
                 case Key.Enter:
-                    GameRestart();
+                    mainWindow.GameRestart();
                     break;
                 case Key.Left:
                     for (int i = 0; i < _FieldSize; i++)  // Элемент Столбца

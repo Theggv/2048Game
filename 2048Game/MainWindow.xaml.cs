@@ -54,6 +54,23 @@ namespace _2048Game
             _Game.UpdateLayout();
         }
 
+        public void GameRestart()
+        {
+            if (Game.Score > 0)
+            {
+                ScoreBase.AddScore(new UserInfo("player", Game.Score));
+            }
+
+            Game.G_Size = Game.G_ChangedSize;
+            _Game = new Game(this);
+
+            Grid.SetRow(_Game, 3);
+            Grid.SetColumnSpan(_Game, 3);
+
+            mainGrid.Children.Add(_Game);
+            _Game.UpdateLayout();
+        }
+
         /// <summary>
         /// Обработка нажатий
         /// </summary>
@@ -157,7 +174,7 @@ namespace _2048Game
         /// <param name="e"></param>
         private void buttonRestart_Click(object sender, RoutedEventArgs e)
         {
-            GameStart();
+            GameRestart();
         }
 
         /// <summary>
@@ -177,29 +194,14 @@ namespace _2048Game
         /// <param name="e"></param>
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            FileStream file;
             try
             {
-                file = new FileStream("scores.bin", FileMode.Create);
+                ScoreBase.ScoresSave(_ScoreBase);
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 MessageBox.Show(ex.Message);
-                throw new Exception();
             }
-
-            BinaryFormatter binaryFormatter = new BinaryFormatter();
-            try
-            {
-                binaryFormatter.Serialize(file, _ScoreBase);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-                throw new Exception();
-            }
-
-            file.Close();
         }
     }
 }

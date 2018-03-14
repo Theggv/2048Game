@@ -90,6 +90,31 @@ namespace _2048Game
 
             return output;
         }
+
+        public static void ScoresSave(ScoreBase scoreBase)
+        {
+            FileStream file;
+            try
+            {
+                file = new FileStream(_FileName, FileMode.Create);
+            }
+            catch
+            {
+                throw new Exception();
+            }
+
+            BinaryFormatter binaryFormatter = new BinaryFormatter();
+            try
+            {
+                binaryFormatter.Serialize(file, scoreBase);
+            }
+            catch 
+            {
+                throw new Exception();
+            }
+
+            file.Close();
+        }
     }
 
     [Serializable]
