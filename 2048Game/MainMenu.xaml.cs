@@ -23,7 +23,7 @@ namespace _2048Game
         {
             if (Game.Score > 0)
             {
-                MainWindow.ScoreBase.AddScore(new UserInfo("player", Game.Score));
+                MainWindow.ScoreBase.AddScore(new UserInfo("Player", Game.Score));
             }
 
             Animations.OpacityAnimation(this, 1, 0, 0.3, _MainWindow);

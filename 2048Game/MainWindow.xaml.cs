@@ -58,7 +58,7 @@ namespace _2048Game
         {
             if (Game.Score > 0)
             {
-                ScoreBase.AddScore(new UserInfo("player", Game.Score));
+                ScoreBase.AddScore(new UserInfo("Player", Game.Score));
             }
 
             Game.G_Size = Game.G_ChangedSize;
@@ -113,9 +113,12 @@ namespace _2048Game
         /// <summary>
         /// Вывод поражения
         /// </summary>
-        public void Lose()
+        public void Lose(int score)
         {
-            var loseState = new LoseState(this);
+            var userInfo = new UserInfo("player", score);
+            ScoreBase.AddScore(userInfo);
+            
+            var loseState = new LoseState(this, ScoreBase.Find(userInfo));
 
             Grid.SetColumn(loseState, 0);
             Grid.SetRow(loseState, 0);

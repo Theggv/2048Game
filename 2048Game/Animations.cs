@@ -174,8 +174,10 @@ namespace _2048Game
             var offsetTranform = new TranslateTransform();
             Target.RenderTransform = offsetTranform;
             
+            var offsetX = SetDoubleAnimation(0, 10, 1500);
             var offsetY = SetDoubleAnimation(0, -20, 1500);
-            
+
+            offsetTranform.BeginAnimation(TranslateTransform.XProperty, offsetX);
             offsetTranform.BeginAnimation(TranslateTransform.YProperty, offsetY);
         }
 

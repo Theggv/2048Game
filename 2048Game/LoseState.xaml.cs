@@ -21,12 +21,17 @@ namespace _2048Game
     public partial class LoseState : UserControl
     {
         private MainWindow _MainWindow;
+        private int _ScoreIndex;
 
-        public LoseState(MainWindow window)
+        public LoseState(MainWindow window, int index)
         {
             InitializeComponent();
 
             _MainWindow = window;
+
+            curUserName.Text = MainWindow.ScoreBase[index].UserName;
+            curScore.Text = MainWindow.ScoreBase[index].Score.ToString();
+            _ScoreIndex = index;
         }
 
         private void buttonRestart_Click(object sender, RoutedEventArgs e)
@@ -40,6 +45,12 @@ namespace _2048Game
             Animations.OpacityAnimation(this, 1, 0, 0.3, _MainWindow);
 
             _MainWindow.ShowMainMenu();
+        }
+
+        private void UserControl_Unloaded(object sender, RoutedEventArgs e)
+        {
+            MainWindow.ScoreBase[_ScoreIndex].UserName = curUserName.Text;
+            MainWindow.ScoreBase[_ScoreIndex].Score = int.Parse(curScore.Text);
         }
     }
 }

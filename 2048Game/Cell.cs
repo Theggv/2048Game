@@ -15,7 +15,7 @@ namespace _2048Game
 
         public bool IsCellFree { get { return _IsFree; } set { _IsFree = value; } }
 
-        public Point Coordinates { get { return _Coordinates; } set { _Coordinates = value; } }
+        public Point Coordinates { get { return _Coordinates; } }
 
         public LogicalCell(Point coord, bool isFree = true)
         {
@@ -29,9 +29,9 @@ namespace _2048Game
     /// </summary>
     public partial class PhysicalCell : Border
     {
-        private int _Row;
-        private int _Column;
-        private TextBlock _TextBlock;
+        private int _Row; // Строка плитки
+        private int _Column; // Столбец плитки
+        private TextBlock _TextBlock; // Номинал плитки
 
         public int Row { get { return _Row; } set { _Row = value; } }
         public int Column { get { return _Column; } set { _Column = value; } }

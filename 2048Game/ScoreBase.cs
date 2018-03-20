@@ -13,6 +13,23 @@ namespace _2048Game
 
         public List<UserInfo> Scores { get { return _ScoreBase; } set { _ScoreBase = value; } }
 
+        public UserInfo this[int index]
+        {
+            get
+            {
+                return _ScoreBase[index];
+            }
+            set
+            {
+                _ScoreBase[index] = value;
+            }
+        }
+
+        public int Find(UserInfo userInfo)
+        {
+            return _ScoreBase.IndexOf(userInfo);
+        }
+
         public void AddScore(UserInfo userInfo)
         {
             _ScoreBase.Add(userInfo);

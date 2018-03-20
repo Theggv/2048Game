@@ -38,7 +38,7 @@ namespace _2048Game
         {
             Animations.OpacityAnimation(this, 1, 0, 0.3, mainWindow);
 
-            MainWindow.ScoreBase.AddScore(new UserInfo("player", Game.Score));
+            MainWindow.ScoreBase.AddScore(new UserInfo("Player", Game.Score));
             mainWindow.GameRestart();
         }
     }

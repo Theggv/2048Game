@@ -5,25 +5,39 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:_2048Game"
              mc:Ignorable="d" 
-             d:DesignHeight="320" d:DesignWidth="240">
-    <Grid Background="#CCAEA98C">
+             d:DesignHeight="320" d:DesignWidth="240" Unloaded="UserControl_Unloaded">
+    <Grid Background="#CCAEA98C" >
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="4*"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <TextBlock x:Name="textBlock" Text="Вы проиграли!"
                    FontSize="20" FontFamily="Verdana" FontWeight="Bold"
-                   Foreground="#FFFFFAEE" Grid.ColumnSpan="3" 
+                   Foreground="#FFFFFAEE" Grid.ColumnSpan="6" 
                    HorizontalAlignment="Center" VerticalAlignment="Center"
                    TextAlignment="Center" Opacity="0.9"/>
-        <Border BorderBrush="Black" BorderThickness="0" Grid.Row="2" Grid.Column="1" Opacity="1" CornerRadius="10" Background="#FF969696" Grid.RowSpan="1" Margin="2">
+        <Border BorderBrush="Black" BorderThickness="0" Grid.Row="3" Grid.Column="2" Grid.ColumnSpan="2" Opacity="1" CornerRadius="10" Background="#FF969696" Margin="2">
+            <Button Focusable="False" x:Name="BestScores" Content="Заново" FontSize="14" Foreground="#FFFFFAEE" Click="buttonRestart_Click" Background="{x:Null}" BorderBrush="{x:Null}" Padding="1" BorderThickness="0" FontWeight="Bold" IsDefault="True" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.9">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <ContentPresenter Content="{TemplateBinding Content}"/>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+        </Border>
+        <Border BorderBrush="Black" BorderThickness="0" Grid.Row="4" Grid.Column="2" Opacity="1" CornerRadius="10" Background="#FF969696" Grid.ColumnSpan="2" Margin="2">
             <Button Focusable="False" x:Name="BackMenu" Content="В меню" FontSize="14" Foreground="#FFFFFAEE" Click="BackMenu_Click" Background="{x:Null}" BorderBrush="{x:Null}" Padding="1" BorderThickness="0" FontWeight="Bold" IsDefault="True" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.9">
                 <Button.Template>
                     <ControlTemplate TargetType="Button">
@@ -32,14 +46,24 @@
                 </Button.Template>
             </Button>
         </Border>
-        <Border BorderBrush="Black" BorderThickness="0" Grid.Row="1" Grid.Column="1" Opacity="1" CornerRadius="10" Background="#FF969696" Grid.RowSpan="1" Margin="2">
-            <Button Focusable="False" x:Name="BestScores" Content="Заново" FontSize="14" Foreground="#FFFFFAEE" Click="buttonRestart_Click" Background="{x:Null}" BorderBrush="{x:Null}" Padding="1" BorderThickness="0" FontWeight="Bold" IsDefault="True" HorizontalAlignment="Center" VerticalAlignment="Center" Opacity="0.9">
-                <Button.Template>
-                    <ControlTemplate TargetType="Button">
-                        <ContentPresenter Content="{TemplateBinding Content}"/>
-                    </ControlTemplate>
-                </Button.Template>
-            </Button>
+        <Border Grid.Row="1" Grid.Column="1" Opacity="0.9"
+                Grid.ColumnSpan="2" Background="#FFFFFAEE" CornerRadius="10">
+            <Border Background="#CC9C977B" CornerRadius="10" BorderThickness="4">
+                <TextBox x:Name="curUserName" Text="Player" Foreground="#FFFFFA" HorizontalAlignment="Center"
+                           VerticalAlignment="Center" FontSize="14" FontWeight="Bold"
+                           FontFamily="Verdana" Background="#00FFFFFF">
+                </TextBox>
+            </Border>
+        </Border>
+        <Border Grid.Row="1" Grid.Column="3" Opacity="0.9"
+                Grid.ColumnSpan="2" Background="#FFFFFAEE" CornerRadius="10">
+            <Border Background="#CC9C977B" CornerRadius="10" BorderThickness="4">
+                <TextBlock x:Name="curScore" Text="0" Foreground="#FFFFFA" HorizontalAlignment="Center"
+                           VerticalAlignment="Center" FontSize="14" FontWeight="Bold"
+                           FontFamily="Verdana">
+
+                </TextBlock>
+            </Border>
         </Border>
     </Grid>
 </UserControl>
