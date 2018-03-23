@@ -29,8 +29,9 @@ namespace _2048Game
 
             _MainWindow = window;
 
-            curUserName.Text = MainWindow.ScoreBase[index].UserName;
-            curScore.Text = MainWindow.ScoreBase[index].Score.ToString();
+            ScoreStr.BorderThickness = new Thickness(4);
+            ScoreStr.curUserName.Text = MainWindow.ScoreBase[index].UserName;
+            ScoreStr.curScore.Text = MainWindow.ScoreBase[index].Score.ToString();
             _ScoreIndex = index;
         }
 
@@ -49,8 +50,8 @@ namespace _2048Game
 
         private void UserControl_Unloaded(object sender, RoutedEventArgs e)
         {
-            MainWindow.ScoreBase[_ScoreIndex].UserName = curUserName.Text;
-            MainWindow.ScoreBase[_ScoreIndex].Score = int.Parse(curScore.Text);
+            MainWindow.ScoreBase[_ScoreIndex].UserName = ScoreStr.curUserName.Text;
+            MainWindow.ScoreBase[_ScoreIndex].Score = int.Parse(ScoreStr.curScore.Text);
         }
     }
 }

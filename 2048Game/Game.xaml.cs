@@ -24,6 +24,7 @@ namespace _2048Game
 
         private static int _FieldSize = 4;
         private static int _FieldChangedSize = _FieldSize;
+        private const int _WINSCORE = 2048;
 
         private const double CELL_SIZE = 60; // Размер клетки
         private double _CellWidth; // Длина Клетки
@@ -69,7 +70,7 @@ namespace _2048Game
         private void FieldCanvas_Loaded(object sender, RoutedEventArgs e)
         {
             _GameState = GameState.Started;
-
+            
             Canvas.SetLeft(mainWindow.curScore, mainWindow.scoreCanvas.ActualWidth * 0.3);
             Canvas.SetLeft(mainWindow.bestScore, mainWindow.scoreCanvas.ActualWidth * 0.8);
             mainWindow.UpdateLayout();
@@ -682,13 +683,13 @@ namespace _2048Game
                 }
             }
 
-            // Если игра ещё не выйграна, проверка на победу
+            // Если игра ещё не выиграна, проверка на победу
             if (_GameState != GameState.Win)
             {
                 // Проверка на наличие клетки со значением 2048
                 foreach (var element in _PhyCell)
                 {
-                    if (element != null && element.Value == 2048)
+                    if (element != null && element.Value == _WINSCORE)
                     {
                         _GameState = GameState.Win;
                         break;

@@ -15,6 +15,7 @@ namespace _2048Game
         private Game _Game;
         private MainMenu _MainMenu;
         private static ScoreBase _ScoreBase = new ScoreBase();
+        private Timer _Timer;
 
         public static ScoreBase ScoreBase { get { return _ScoreBase; } set { _ScoreBase = value; } }
 
@@ -32,7 +33,9 @@ namespace _2048Game
             InitializeComponent();
 
             _MainMenu = new MainMenu(this);
-            
+            _Timer = new Timer(this);
+
+
             Grid.SetColumnSpan(_MainMenu, 3);
             Grid.SetRowSpan(_MainMenu, 4);
 
@@ -52,6 +55,8 @@ namespace _2048Game
 
             mainGrid.Children.Add(_Game);
             _Game.UpdateLayout();
+
+            _Timer.Start();
         }
 
         public void GameRestart()
@@ -69,6 +74,8 @@ namespace _2048Game
 
             mainGrid.Children.Add(_Game);
             _Game.UpdateLayout();
+
+            _Timer.Start();
         }
 
         /// <summary>
@@ -89,6 +96,7 @@ namespace _2048Game
                     else
                     {
                         ShowMainMenu();
+                        _Timer.Stop();
                     }
                 }
                 else
@@ -127,6 +135,8 @@ namespace _2048Game
 
             mainGrid.Children.Add(loseState);
             Animations.OpacityAnimation(loseState, 0, 1, 1.5);
+
+            _Timer.Stop();
         }
 
         /// <summary>
@@ -143,6 +153,13 @@ namespace _2048Game
 
             mainGrid.Children.Add(winState);
             Animations.OpacityAnimation(winState, 0, 1, 1.5);
+
+            _Timer.Stop();
+        }
+
+        public void UpdateTimer()
+        {
+            textBlockTimer.Text = _Timer.GetTime;
         }
 
         /// <summary>
@@ -154,8 +171,11 @@ namespace _2048Game
             mainGrid.Children.Remove(uIElement);
             uIElement = null;
 
-            if(_Game != null)
+            if (_Game != null)
+            {
                 _Game.IsInterfaceLocked = false;
+                _Timer.Resume();
+            }
         }
 
         public void CheckContinue(UIElement uIElement)

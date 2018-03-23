@@ -55,6 +55,17 @@
                 </Button.Template>
             </Button>
         </Border>
+        <Border BorderBrush="Black" BorderThickness="0"
+                Grid.Row="2" Grid.Column="2" Opacity="0.8"
+                CornerRadius="10" Background="#FF969696"
+                Margin="2">
+            <TextBlock x:Name="textBlockTimer" Text="0:00:00"  TextDecorations="{x:Null}"
+                       Foreground="#FFF0F0F0" TextWrapping="Wrap"
+                       HorizontalAlignment="Center" VerticalAlignment="Center" 
+                       TextAlignment="Center" FontSize="14"
+                       FontWeight="Bold" Opacity="0.8" />
+        </Border>
+        
         <TextBlock x:Name="blockScore" x:FieldModifier="public" Grid.Row="1" Grid.Column="1" Text="0" Foreground="#FFF0F0F0" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" FontSize="18" FontWeight="Bold" Opacity="0.9"/>
         <TextBlock x:Name="blockBestScore" x:FieldModifier="public" Grid.Row="1" Grid.Column="2" Text="0" Foreground="#FFF0F0F0" HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" FontSize="18" FontWeight="Bold" Opacity="0.9"/>
         <Slider x:Name="slider" Grid.Row="2" Grid.Column="0

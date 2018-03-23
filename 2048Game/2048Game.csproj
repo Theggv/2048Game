@@ -77,9 +77,13 @@
       <DependentUpon>MainMenu.xaml</DependentUpon>
     </Compile>
     <Compile Include="ScoreBase.cs" />
+    <Compile Include="ScoreString.xaml.cs">
+      <DependentUpon>ScoreString.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ScoreTable.xaml.cs">
       <DependentUpon>ScoreTable.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Timer.cs" />
     <Compile Include="WinState.xaml.cs">
       <DependentUpon>WinState.xaml</DependentUpon>
     </Compile>
@@ -112,6 +116,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="ScoreString.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ScoreTable.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
