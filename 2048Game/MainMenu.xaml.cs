@@ -35,11 +35,6 @@ namespace _2048Game
             _MainWindow.CheckContinue(this);
         }
 
-        private void HelpButton_Click(object sender, RoutedEventArgs e)
-        {
-            MessageBox.Show("In developing..");
-        }
-
         private void BestScores_Click(object sender, RoutedEventArgs e)
         {
             if (MainWindow.ScoreBase.IsHasScores())

@@ -9,7 +9,8 @@ namespace _2048Game
     public class ScoreBase
     {
         private List<UserInfo> _ScoreBase = new List<UserInfo>();
-        private const string _FileName = "scores.bin";
+        private static string _Path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "/2048";
+        private static string _FileName = _Path + "/scores.bin";
 
         public List<UserInfo> Scores { get { return _ScoreBase; } set { _ScoreBase = value; } }
 
@@ -76,14 +77,17 @@ namespace _2048Game
 
         public static ScoreBase ScoresLoad()
         {
+            if (!Directory.Exists(_Path))
+                Directory.CreateDirectory(_Path);
+
             FileStream fileStream;
             try
             {
                 fileStream = new FileStream(_FileName, FileMode.Open);
             }
-            catch
+            catch (Exception e)
             {
-                throw new Exception();
+                throw new Exception(e.ToString());
             }
 
             BinaryFormatter binaryFormatter = new BinaryFormatter();
@@ -94,10 +98,10 @@ namespace _2048Game
                 output = (ScoreBase)binaryFormatter.Deserialize(fileStream);
                 fileStream.Close();
             }
-            catch
+            catch (Exception e)
             {
                 fileStream.Close();
-                throw new Exception();
+                throw new Exception(e.ToString());
             }
 
             output.SortScores();
@@ -112,9 +116,9 @@ namespace _2048Game
             {
                 file = new FileStream(_FileName, FileMode.Create);
             }
-            catch
+            catch (Exception e)
             {
-                throw new Exception();
+                throw new Exception(e.ToString());
             }
 
             BinaryFormatter binaryFormatter = new BinaryFormatter();
@@ -122,9 +126,9 @@ namespace _2048Game
             {
                 binaryFormatter.Serialize(file, scoreBase);
             }
-            catch 
+            catch (Exception e)
             {
-                throw new Exception();
+                throw new Exception(e.ToString());
             }
 
             file.Close();

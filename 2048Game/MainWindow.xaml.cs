@@ -123,7 +123,7 @@ namespace _2048Game
         /// </summary>
         public void Lose(int score)
         {
-            var userInfo = new UserInfo("player", score);
+            var userInfo = new UserInfo("Player", score);
             ScoreBase.AddScore(userInfo);
             
             var loseState = new LoseState(this, ScoreBase.Find(userInfo));
